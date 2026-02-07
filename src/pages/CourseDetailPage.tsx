@@ -236,7 +236,11 @@ export default function CourseDetailPage() {
               </div>
 
               {/* CTA Button */}
+<<<<<<< HEAD
               {hasAccess && (
+=======
+              {enrollment && (
+>>>>>>> b71b5680f9698e5896b5838170638504f1747835
                 <Button className="w-full mt-4" size="sm" asChild>
                   <Link to={`/course/${course.id}/learn`}>
                     <Play className="mr-2 h-4 w-4" />
@@ -245,7 +249,7 @@ export default function CourseDetailPage() {
                 </Button>
               )}
 
-              {!hasAccess && (
+              {!enrollment && (
                 <>
                   {course.accessRule === 'payment' && course.price ? (
                     <Button className="w-full mt-4" size="sm" onClick={handlePurchase}>
