@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { 
-  Play, 
-  FileText, 
-  Image, 
-  HelpCircle, 
-  ChevronLeft, 
+import {
+  Play,
+  FileText,
+  Image,
+  HelpCircle,
+  ChevronLeft,
   ChevronRight,
   Menu,
   X,
@@ -162,11 +162,11 @@ export default function LessonPlayerPage() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border p-4">
           <Link
-            to={`/course/${courseId}`}
+            to="/my-courses"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Course
+            Back to My Courses
           </Link>
           <Button
             variant="ghost"

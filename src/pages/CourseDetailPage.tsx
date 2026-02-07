@@ -14,14 +14,8 @@ import {
   HelpCircle,
   Search,
   Download,
-<<<<<<< HEAD
-  ExternalLink,
-  ChevronLeft
-=======
-  Download,
   ExternalLink,
   ArrowLeft
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -29,6 +23,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
 import { mockCourses, mockLessons, mockReviews, mockEnrollments } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 import { Lesson, LessonType } from '@/types';
@@ -50,9 +45,14 @@ export default function CourseDetailPage() {
   const { user, isAuthenticated } = useAuth();
   const [searchLesson, setSearchLesson] = useState('');
 
+  // Review State
+  const [reviewsList, setReviewsList] = useState(mockReviews.filter((r) => r.courseId === courseId));
+  const [userRating, setUserRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   const course = mockCourses.find((c) => c.id === courseId);
   const lessons = mockLessons.filter((l) => l.courseId === courseId);
-  const reviews = mockReviews.filter((r) => r.courseId === courseId);
   const enrollment = mockEnrollments.find(
     (e) => e.courseId === courseId && e.userId === user?.id
   );
@@ -99,16 +99,42 @@ export default function CourseDetailPage() {
     });
   };
 
+  const handleReviewSubmit = () => {
+    if (userRating === 0) {
+      toast.error('Please select a rating');
+      return;
+    }
+    if (!reviewComment.trim()) {
+      toast.error('Please write a review comment');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      const newReview = {
+        id: `r-${Date.now()}`,
+        courseId: courseId!,
+        userId: user?.id || 'guest',
+        userName: user?.name || 'Guest User',
+        userAvatar: user?.avatar,
+        rating: userRating,
+        comment: reviewComment,
+        createdAt: new Date().toISOString(),
+      };
+
+      setReviewsList([newReview, ...reviewsList]);
+      setUserRating(0);
+      setReviewComment('');
+      setIsSubmittingReview(false);
+      toast.success('Review submitted successfully!');
+    }, 1000);
+  };
+
   return (
     <div className="py-8">
       <div className="container">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 pl-0 hover:bg-transparent hover:text-primary">
-            <ChevronLeft className="h-4 w-4" />
-            Back
-=======
-<<<<<<< HEAD
         {/* Back Button */}
         <div className="mb-6">
           <Button variant="ghost" className="gap-2 pl-0 hover:bg-transparent hover:text-primary" asChild>
@@ -116,7 +142,6 @@ export default function CourseDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               Back to My Courses
             </Link>
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
           </Button>
         </div>
 
@@ -151,52 +176,6 @@ export default function CourseDetailPage() {
                   className="h-40 w-full object-cover"
                 />
               </div>
-<<<<<<< HEAD
-              <div className="p-6">
-                {enrollment ? (
-                  <>
-                    <div className="mb-4">
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Your Progress</span>
-                        <span className="font-medium">{enrollment.progress}%</span>
-                      </div>
-                      <Progress value={enrollment.progress} className="h-2" />
-                    </div>
-                    <Button className="w-full" size="lg" asChild>
-                      <Link to={`/course/${course.id}/learn`}>
-                        <Play className="mr-2 h-5 w-5" />
-                        {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
-                      </Link>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    {course.accessRule === 'payment' && course.price ? (
-                      <>
-                        <div className="mb-4 text-center">
-                          <span className="text-3xl font-bold">₹{course.price}</span>
-                        </div>
-                        <Button className="w-full" size="lg">
-                          Buy Now
-                        </Button>
-                      </>
-                    ) : course.accessRule === 'invitation' ? (
-                      <Button className="w-full" size="lg" variant="outline" disabled>
-                        <Lock className="mr-2 h-5 w-5" />
-                        Invitation Only
-                      </Button>
-                    ) : isAuthenticated ? (
-                      <Button className="w-full" size="lg" onClick={handleEnroll}>
-                        Enroll Now - Free
-                      </Button>
-                    ) : (
-                      <Button className="w-full" size="lg" asChild>
-                        <Link to={`/login?redirect=/course/${courseId}`}>Sign In to Enroll</Link>
-                      </Button>
-                    )}
-                  </>
-                )}
-=======
             </div>
 
             {/* Right - Progress and Stats */}
@@ -205,7 +184,6 @@ export default function CourseDetailPage() {
               <div className="mb-4 text-center">
                 <p className="text-2xl font-bold">{enrollment?.progress || 0}%</p>
                 <p className="text-xs text-muted-foreground">Completed</p>
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
               </div>
 
               {/* Progress Bar */}
@@ -229,9 +207,11 @@ export default function CourseDetailPage() {
 
               {/* CTA Button */}
               {enrollment && (
-                <Button className="w-full mt-4" size="sm" disabled>
-                  <Play className="mr-2 h-4 w-4" />
-                  {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
+                <Button className="w-full mt-4" size="sm" asChild>
+                  <Link to={`/course/${course.id}/learn`}>
+                    <Play className="mr-2 h-4 w-4" />
+                    {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
+                  </Link>
                 </Button>
               )}
 
@@ -239,19 +219,19 @@ export default function CourseDetailPage() {
                 <>
                   {course.accessRule === 'payment' && course.price ? (
                     <Button className="w-full mt-4" size="sm">
-                      Buy Now (${course.price})
+                      Buy Now (₹{course.price})
                     </Button>
                   ) : course.accessRule === 'invitation' ? (
                     <Button className="w-full mt-4" size="sm" variant="outline" disabled>
                       Invitation Only
                     </Button>
                   ) : isAuthenticated ? (
-                    <Button className="w-full mt-4" size="sm">
+                    <Button className="w-full mt-4" size="sm" onClick={handleEnroll}>
                       Enroll Now - Free
                     </Button>
                   ) : (
                     <Button className="w-full mt-4" size="sm" asChild>
-                      <Link to="/login">Sign In to Enroll</Link>
+                      <Link to={`/login?redirect=/course/${courseId}`}>Sign In to Enroll</Link>
                     </Button>
                   )}
                 </>
@@ -264,7 +244,7 @@ export default function CourseDetailPage() {
         <Tabs defaultValue="overview" className="mt-12">
           <TabsList className="mb-6">
             <TabsTrigger value="overview">Course Overview</TabsTrigger>
-            <TabsTrigger value="reviews">Ratings and Reviews ({reviews.length})</TabsTrigger>
+            <TabsTrigger value="reviews">Ratings and Reviews ({reviewsList.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -368,10 +348,63 @@ export default function CourseDetailPage() {
                 </div>
               </div>
 
+              {/* Add Review Form */}
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h3 className="mb-4 text-lg font-semibold">Write a Review</h3>
+                {isAuthenticated ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Rating</label>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setUserRating(star)}
+                            className="focus:outline-none transition-transform hover:scale-110"
+                          >
+                            <Star
+                              className={cn(
+                                "h-6 w-6 transition-colors",
+                                star <= userRating
+                                  ? "fill-warning text-warning"
+                                  : "text-muted hover:text-warning/50"
+                              )}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Your Review</label>
+                      <Textarea
+                        placeholder="Share your experience with this course..."
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        className="min-h-[100px]"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleReviewSubmit}
+                      disabled={isSubmittingReview || userRating === 0 || !reviewComment.trim()}
+                    >
+                      {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <p className="mb-4 text-muted-foreground">Please sign in to leave a review</p>
+                    <Button variant="outline" asChild>
+                      <Link to={`/login?redirect=/course/${courseId}`}>Sign In</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               {/* Reviews List */}
               <div className="space-y-4">
-                {reviews.length > 0 ? (
-                  reviews.map((review) => (
+                {reviewsList.length > 0 ? (
+                  reviewsList.map((review) => (
                     <div key={review.id} className="rounded-xl border border-border bg-card p-6">
                       <div className="mb-4 flex items-start justify-between">
                         <div className="flex items-center gap-3">

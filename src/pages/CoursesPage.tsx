@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Grid, List } from 'lucide-react';
 import { Input } from '@/components/ui/input';

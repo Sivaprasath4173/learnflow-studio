@@ -11,20 +11,16 @@ import {
   Trash2,
   BookOpen,
   Clock,
-<<<<<<< HEAD
   Users,
   MessageCircle,
   Mail,
-  Copy
-=======
-  X
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
+  Copy,
+  MoreHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-<<<<<<< HEAD
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +31,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-=======
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
 import {
   Dialog,
   DialogContent,
@@ -116,6 +110,10 @@ export default function BackofficeCoursesPage() {
   const handleDelete = (courseId: string) => {
     setCourses(courses.filter((course) => course.id !== courseId));
     toast.success('Course deleted successfully');
+  };
+
+  const handleShare = (courseId: string) => {
+    handleCopyLink(courseId);
   };
 
   return (
@@ -318,8 +316,11 @@ export default function BackofficeCoursesPage() {
                     <Clock className="h-4 w-4" />
                     {formatDuration(course.totalDuration)}
                   </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    {course.enrolledCount} enrolled
+                  </span>
                 </div>
-<<<<<<< HEAD
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" asChild>
                     <Link to={`/backoffice/courses/${course.id}`}>
@@ -370,126 +371,6 @@ export default function BackofficeCoursesPage() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-xl border border-border bg-card">
-          <div className="divide-y divide-border">
-            {filteredCourses.map((course) => (
-              <div
-                key={course.id}
-                className="flex items-center gap-4 p-4 transition-colors hover:bg-muted/50"
-              >
-                <div className="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="truncate font-semibold">{course.title}</h3>
-                    <Badge variant={course.status === 'published' ? 'default' : 'secondary'}>
-                      {course.status}
-                    </Badge>
-                  </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Eye className="h-4 w-4" />
-                      {course.viewsCount} views
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="h-4 w-4" />
-                      {course.totalLessons} lessons
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {formatDuration(course.totalDuration)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {course.enrolledCount} enrolled
-                    </span>
-                  </div>
-                </div>
-=======
-
-                {/* Actions */}
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => handleShare(course.id)}
-                  >
-                    <Share2 className="mr-2 h-4 w-4" />
-                    Share
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link to={`/backoffice/courses/${course.id}`}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Link>
-                  </Button>
-<<<<<<< HEAD
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="cursor-pointer">
-                          <Share2 className="mr-2 h-4 w-4" />
-                          Share
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem onClick={() => handleShareWhatsapp(course.id)} className="cursor-pointer">
-                            <MessageCircle className="mr-2 h-4 w-4" />
-                            WhatsApp
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleShareEmail(course.id)} className="cursor-pointer">
-                            <Mail className="mr-2 h-4 w-4" />
-                            Gmail
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleCopyLink(course.id)} className="cursor-pointer">
-                            <Copy className="mr-2 h-4 w-4" />
-                            Copy Link
-                          </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuSub>
-                      <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link to={`/course/${course.id}`}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Preview
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(course.id)}
-                        className="text-destructive cursor-pointer"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-=======
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(course.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
                 </div>
               </CardContent>
             </Card>

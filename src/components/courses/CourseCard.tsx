@@ -80,7 +80,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
 
     return (
       <Button className="w-full" asChild>
-        <Link to={`/course/${course.id}/learn`}>
+        <Link to={`/course/${course.id}`}>
           <Play className="mr-2 h-4 w-4" />
           Continue
         </Link>
