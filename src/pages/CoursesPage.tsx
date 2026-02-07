@@ -36,10 +36,10 @@ export default function CoursesPage() {
   });
 
   return (
-    <div className="py-8">
+    <div className="py-7 md:py-12">
       <div className="container">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="mb-2 text-3xl font-bold">Explore Courses</h1>
           <p className="text-muted-foreground">
             Discover {filteredCourses.length} courses to boost your skills
@@ -47,7 +47,7 @@ export default function CoursesPage() {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Search */}
           <div className="relative w-full md:max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -79,7 +79,7 @@ export default function CoursesPage() {
         </div>
 
         {/* Tags */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap gap-2">
           {allTags.map((tag) => (
             <Badge
               key={tag}
@@ -95,7 +95,7 @@ export default function CoursesPage() {
         {/* Course Grid */}
         {filteredCourses.length > 0 ? (
           <div className={cn(
-            "grid gap-6",
+            "grid gap-5",
             viewMode === 'grid'
               ? "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1"

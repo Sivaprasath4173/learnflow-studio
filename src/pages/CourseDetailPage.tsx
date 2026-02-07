@@ -67,7 +67,7 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="container py-20 text-center">
+      <div className="container py-12 text-center">
         <h1 className="mb-4 text-2xl font-bold">Course not found</h1>
         <Button asChild>
           <Link to="/courses">Back to Courses</Link>
@@ -155,7 +155,7 @@ export default function CourseDetailPage() {
   };
 
   return (
-    <div className="py-8">
+    <div className="py-7 md:py-12">
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
@@ -174,7 +174,7 @@ export default function CourseDetailPage() {
           </Button>
         </div>
         {/* Course Overview Section - Horizontal Layout */}
-        <div className="mb-8 rounded-xl border border-border bg-card overflow-hidden">
+        <div className="mb-6 rounded-xl border border-border bg-card overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_320px]">
             {/* Left - Course Cover */}
             <div className="hidden lg:block">
@@ -236,11 +236,7 @@ export default function CourseDetailPage() {
               </div>
 
               {/* CTA Button */}
-<<<<<<< HEAD
               {hasAccess && (
-=======
-              {enrollment && (
->>>>>>> b71b5680f9698e5896b5838170638504f1747835
                 <Button className="w-full mt-4" size="sm" asChild>
                   <Link to={`/course/${course.id}/learn`}>
                     <Play className="mr-2 h-4 w-4" />
@@ -249,7 +245,7 @@ export default function CourseDetailPage() {
                 </Button>
               )}
 
-              {!enrollment && (
+              {!hasAccess && (
                 <>
                   {course.accessRule === 'payment' && course.price ? (
                     <Button className="w-full mt-4" size="sm" onClick={handlePurchase}>
@@ -276,7 +272,7 @@ export default function CourseDetailPage() {
 
 
         {/* Tabs */}
-        <Tabs defaultValue="overview" className="mt-12">
+        <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="mb-6">
             <TabsTrigger value="overview">Course Overview</TabsTrigger>
             <TabsTrigger value="reviews">Ratings and Reviews ({reviewsList.length})</TabsTrigger>
