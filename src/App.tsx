@@ -18,6 +18,7 @@ import LessonPlayerPage from "@/pages/LessonPlayerPage";
 import QuizPage from "@/pages/QuizPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/NotFound";
+import SettingsPage from "@/pages/SettingsPage";
 
 // Backoffice Pages
 import BackofficeDashboard from "@/pages/backoffice/BackofficeDashboard";
@@ -70,6 +71,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <MyCoursesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />
