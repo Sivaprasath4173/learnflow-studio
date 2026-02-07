@@ -46,9 +46,18 @@ export default function LessonPlayerPage() {
   const [showGamificationPopup, setShowGamificationPopup] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
 
+<<<<<<< Updated upstream
   const course = useMemo(() => mockCourses.find((c) => c.id === courseId), [courseId]);
   const lessons = useMemo(() => mockLessons.filter((l) => l.courseId === courseId), [courseId]);
   const enrollment = useMemo(() => mockEnrollments.find(
+=======
+  // Course completion state
+  const [courseCompleted, setCourseCompleted] = useState(false);
+
+  const course = mockCourses.find((c) => c.id === courseId);
+  const lessons = mockLessons.filter((l) => l.courseId === courseId);
+  const enrollment = mockEnrollments.find(
+>>>>>>> Stashed changes
     (e) => e.courseId === courseId && e.userId === user?.id
   ), [courseId, user?.id]);
 
@@ -186,7 +195,17 @@ export default function LessonPlayerPage() {
     }
   };
 
+  // Check if all lessons are completed
+  const allLessonsCompleted = completedLessons.length === lessons.length && lessons.length > 0;
+
+  // Complete course action
+  const handleCompleteCourse = () => {
+    setCourseCompleted(true);
+    // Optionally update enrollment/progress state here
+  };
+
   return (
+<<<<<<< Updated upstream
     <div className="flex min-h-screen bg-background">
       <GamificationPopup
         isOpen={showGamificationPopup}
@@ -200,6 +219,9 @@ export default function LessonPlayerPage() {
         progress={progressToNextBadge}
       />
 
+=======
+    <div className="flex min-h-screen bg-background relative">
+>>>>>>> Stashed changes
       {/* Sidebar */}
       <aside
         className={cn(
@@ -368,6 +390,7 @@ export default function LessonPlayerPage() {
             <ChevronLeft className="mr-2 h-4 w-4" />
             Previous
           </Button>
+<<<<<<< Updated upstream
           {currentLessonIndex === lessons.length - 1 ? (
             <Button onClick={handleCompleteCourse} className="bg-success hover:bg-success/90">
               Complete Course
@@ -379,7 +402,37 @@ export default function LessonPlayerPage() {
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           )}
+=======
+          <Button onClick={goToNext} disabled={courseCompleted}>
+            {currentLessonIndex === lessons.length - 1 ? (
+              'Complete Course'
+            ) : (
+              <>
+                Next
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+>>>>>>> Stashed changes
         </footer>
+
+        {/* Course Completion Button (bottom-right) */}
+        {allLessonsCompleted && !courseCompleted && (
+          <div className="fixed bottom-6 right-6 z-50">
+            <Button size="lg" onClick={handleCompleteCourse}>
+              Complete this course
+            </Button>
+          </div>
+        )}
+
+        {/* Success confirmation (optional) */}
+        {courseCompleted && (
+          <div className="fixed bottom-6 right-6 z-50">
+            <Button size="lg" variant="success" disabled>
+              Course Completed!
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );

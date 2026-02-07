@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useParams, Link } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -16,12 +18,24 @@ import { cn } from '@/lib/utils';
 
 type QuizState = 'intro' | 'question' | 'result';
 
+const NEXT_RANK_POINTS = 100; // fallback if badge not available
 export default function QuizPage() {
   const { courseId, quizId } = useParams();
   const [state, setState] = useState<QuizState>('intro');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string[]>>({});
   const [attemptNumber] = useState(1);
+
+  // Points popup state
+  const [showPointsPopup, setShowPointsPopup] = useState(false);
+  const [pointsJustEarned, setPointsJustEarned] = useState(0);
+
+  // Course completion button state
+  const [courseCompleted, setCourseCompleted] = useState(false);
+
+  // For points and badge logic
+  const { user, currentBadge, nextBadge } = useAuth();
+  const [currentPoints, setCurrentPoints] = useState(user?.totalPoints || 0);
 
   const quiz = mockQuizzes.find((q) => q.id === quizId);
 
@@ -79,6 +93,15 @@ export default function QuizPage() {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setState('result');
+      // Show points popup if quiz is passed
+      const score = calculateScore();
+      const percentage = (score / totalQuestions) * 100;
+      const pointsEarned = getPointsEarned();
+      if (percentage >= 50 && pointsEarned > 0) {
+        setPointsJustEarned(pointsEarned);
+        setShowPointsPopup(true);
+        setCurrentPoints((prev) => prev + pointsEarned);
+      }
     }
   };
 
@@ -145,68 +168,85 @@ export default function QuizPage() {
     const isPassing = percentage >= 50;
 
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="w-full max-w-lg text-center">
-          <div className={cn(
-            "mb-8 inline-flex h-24 w-24 items-center justify-center rounded-full",
-            isPassing ? "gradient-success" : "bg-destructive"
-          )}>
-            {isPassing ? (
-              <Trophy className="h-12 w-12 text-success-foreground" />
-            ) : (
-              <XCircle className="h-12 w-12 text-destructive-foreground" />
-            )}
-          </div>
-          
-          <h1 className="mb-2 text-3xl font-bold">
-            {isPassing ? 'Congratulations!' : 'Keep Trying!'}
-          </h1>
-          <p className="mb-8 text-muted-foreground">
-            {isPassing 
-              ? "You've successfully completed the quiz!" 
-              : "You need at least 50% to pass. Try again!"}
-          </p>
-
-          {/* Score */}
-          <div className="mb-8 rounded-xl border border-border bg-card p-6">
-            <div className="mb-6 text-center">
-              <p className="text-sm text-muted-foreground">Your Score</p>
-              <p className="text-5xl font-bold">{percentage}%</p>
-              <p className="text-muted-foreground">{score} of {totalQuestions} correct</p>
-            </div>
-
-            {/* Points Earned */}
-            {isPassing && (
-              <div className="animate-points-pop rounded-lg gradient-primary p-4 text-primary-foreground">
-                <div className="flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  <span className="text-lg font-semibold">+{pointsEarned} Points Earned!</span>
-                </div>
+      <>
+        {/* Points Popup Modal */}
+        <Dialog open={showPointsPopup} onOpenChange={setShowPointsPopup}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="mb-2 text-2xl font-bold">Bingo! You have earned!</DialogTitle>
+            </DialogHeader>
+            <div className="mb-4 text-lg font-semibold text-primary">You earned {pointsJustEarned} points</div>
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-1">
+                <span>{currentPoints} points</span>
+                <span>{nextBadge?.requiredPoints || NEXT_RANK_POINTS} Points</span>
               </div>
-            )}
-          </div>
+              <Progress value={Math.min((currentPoints / (nextBadge?.requiredPoints || NEXT_RANK_POINTS)) * 100, 100)} />
+            </div>
+            <div className="mb-4 text-center text-muted-foreground">Reach the next rank to gain more points.</div>
+            {/* Close button handled by DialogClose */}
+          </DialogContent>
+        </Dialog>
 
-          <div className="flex gap-4">
-            <Button variant="outline" className="flex-1" asChild>
-              <Link to={`/course/${courseId}/learn`}>
-                Back to Course
-              </Link>
-            </Button>
-            {!isPassing && (
-              <Button 
-                className="flex-1" 
-                onClick={() => {
-                  setState('intro');
-                  setCurrentQuestionIndex(0);
-                  setSelectedAnswers({});
-                }}
-              >
-                Try Again
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+          <div className="w-full max-w-lg text-center">
+            <div className={cn(
+              "mb-8 inline-flex h-24 w-24 items-center justify-center rounded-full",
+              isPassing ? "gradient-success" : "bg-destructive"
+            )}>
+              {isPassing ? (
+                <Trophy className="h-12 w-12 text-success-foreground" />
+              ) : (
+                <XCircle className="h-12 w-12 text-destructive-foreground" />
+              )}
+            </div>
+            <h1 className="mb-2 text-3xl font-bold">
+              {isPassing ? 'Congratulations!' : 'Keep Trying!'}
+            </h1>
+            <p className="mb-8 text-muted-foreground">
+              {isPassing
+                ? "You've successfully completed the quiz!"
+                : "You need at least 50% to pass. Try again!"}
+            </p>
+            {/* Score */}
+            <div className="mb-8 rounded-xl border border-border bg-card p-6">
+              <div className="mb-6 text-center">
+                <p className="text-sm text-muted-foreground">Your Score</p>
+                <p className="text-5xl font-bold">{percentage}%</p>
+                <p className="text-muted-foreground">{score} of {totalQuestions} correct</p>
+              </div>
+              {/* Points Earned */}
+              {isPassing && (
+                <div className="animate-points-pop rounded-lg gradient-primary p-4 text-primary-foreground">
+                  <div className="flex items-center justify-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    <span className="text-lg font-semibold">+{pointsEarned} Points Earned!</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-4">
+              <Button variant="outline" className="flex-1" asChild>
+                <Link to={`/course/${courseId}/learn`}>
+                  Back to Course
+                </Link>
               </Button>
-            )}
+              {!isPassing && (
+                <Button
+                  className="flex-1"
+                  onClick={() => {
+                    setState('intro');
+                    setCurrentQuestionIndex(0);
+                    setSelectedAnswers({});
+                  }}
+                >
+                  Try Again
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
