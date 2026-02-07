@@ -5,17 +5,22 @@ import {
   Search,
   Grid,
   List,
-  Edit,
   Share2,
   Eye,
-  Trash2,
-  BookOpen,
   Clock,
   Users,
   MessageCircle,
   Mail,
   Copy,
+<<<<<<< HEAD
   MoreHorizontal
+=======
+  MoreHorizontal,
+  Trash2,
+  BookOpen,
+  Edit,
+  X
+>>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -31,6 +36,16 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
+<<<<<<< HEAD
+=======
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+>>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -48,6 +63,10 @@ export default function BackofficeCoursesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [newCourseDialogOpen, setNewCourseDialogOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
+  const [newCourseType, setNewCourseType] = useState('video');
+  const [newCourseWebsite, setNewCourseWebsite] = useState('');
+  const [newCourseTags, setNewCourseTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState('');
 
   const [courses, setCourses] = useState<any[]>(mockCourses);
 
@@ -61,13 +80,24 @@ export default function BackofficeCoursesPage() {
     return hours > 0 ? `${hours}:${mins.toString().padStart(2, '0')}` : `0:${mins.toString().padStart(2, '0')}`;
   };
 
+  const handleAddTag = () => {
+    if (newTag.trim() && !newCourseTags.includes(newTag.trim())) {
+      setNewCourseTags([...newCourseTags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setNewCourseTags(newCourseTags.filter(tag => tag !== tagToRemove));
+  };
+
   const handleCreateCourse = () => {
     const newCourse = {
       id: `new-course-${Date.now()}`,
       title: newCourseName,
       description: 'New course description',
       image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop',
-      tags: ['New'],
+      tags: newCourseTags.length > 0 ? newCourseTags : ['New'],
       status: 'draft' as const,
       visibility: 'everyone' as const,
       accessRule: 'open' as const,
@@ -81,11 +111,15 @@ export default function BackofficeCoursesPage() {
       reviewsCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      website: newCourseType === 'video' ? newCourseWebsite : undefined,
     };
 
     setCourses([newCourse, ...courses]);
     setNewCourseDialogOpen(false);
     setNewCourseName('');
+    setNewCourseWebsite('');
+    setNewCourseTags([]);
+    setNewTag('');
     toast.success('Course created successfully');
   };
 
@@ -119,11 +153,109 @@ export default function BackofficeCoursesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Courses</h1>
-        <p className="text-muted-foreground">
-          Manage your courses and content
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Courses</h1>
+          <p className="text-muted-foreground">
+            Manage your courses and content
+          </p>
+        </div>
+        <Dialog open={newCourseDialogOpen} onOpenChange={setNewCourseDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Course
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Course</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Course Name *</Label>
+                <Input
+                  id="name"
+                  value={newCourseName}
+                  onChange={(e) => setNewCourseName(e.target.value)}
+                  placeholder="e.g. Advanced React Patterns"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Course Format</Label>
+                <Select value={newCourseType} onValueChange={setNewCourseType}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="video">Video Course</SelectItem>
+                    <SelectItem value="document">Text/Document Course</SelectItem>
+                    <SelectItem value="interactive">Interactive Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {newCourseType === 'video' && (
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="website">Website *</Label>
+                    <Input
+                      id="website"
+                      value={newCourseWebsite}
+                      onChange={(e) => setNewCourseWebsite(e.target.value)}
+                      placeholder="https://example.com"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="tags">Tags</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="tags"
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        placeholder="Add a tag"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddTag();
+                          }
+                        }}
+                      />
+                      <Button type="button" onClick={handleAddTag} size="sm" variant="secondary">
+                        Add
+                      </Button>
+                    </div>
+                    {newCourseTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {newCourseTags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="gap-1 pr-1">
+                            {tag}
+                            <button
+                              onClick={() => handleRemoveTag(tag)}
+                              className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setNewCourseDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleCreateCourse} disabled={!newCourseName.trim()}>
+                Create Course
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Search and View Toggle */}
@@ -379,17 +511,19 @@ export default function BackofficeCoursesPage() {
       )}
 
       {/* Empty State */}
-      {filteredCourses.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="mb-4 rounded-full bg-muted p-4">
-            <BookOpen className="h-8 w-8 text-muted-foreground" />
+      {
+        filteredCourses.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="mb-4 rounded-full bg-muted p-4">
+              <BookOpen className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">No courses found</h3>
+            <p className="text-muted-foreground">
+              {search ? 'Try a different search term' : 'No courses available'}
+            </p>
           </div>
-          <h3 className="mb-2 text-lg font-semibold">No courses found</h3>
-          <p className="text-muted-foreground">
-            {search ? 'Try a different search term' : 'No courses available'}
-          </p>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }

@@ -15,7 +15,8 @@ import {
   FileText,
   Image,
   HelpCircle,
-  Share2
+  Share2,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -70,6 +71,10 @@ export default function CourseEditorPage() {
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState('');
   const [newLessonType, setNewLessonType] = useState<LessonType>('video');
+  const [newLessonWebsite, setNewLessonWebsite] = useState('');
+  const [newLessonTags, setNewLessonTags] = useState<string[]>([]);
+  const [newLessonTag, setNewLessonTag] = useState('');
+  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -89,26 +94,68 @@ export default function CourseEditorPage() {
     toast.success('Message sent to attendees successfully');
   };
 
-  const handleAddLesson = () => {
-    const newLesson = {
-      id: `new-lesson-${Date.now()}`,
-      courseId: courseId!,
-      title: newLessonTitle,
-      description: '',
-      type: newLessonType,
-      order: lessonsList.length + 1,
-      duration: 10,
-      content: {},
-      attachments: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  const handleAddLessonTag = () => {
+    if (newLessonTag.trim() && !newLessonTags.includes(newLessonTag.trim())) {
+      setNewLessonTags([...newLessonTags, newLessonTag.trim()]);
+      setNewLessonTag('');
+    }
+  };
 
-    setLessonsList([...lessonsList, newLesson]);
+  const handleRemoveLessonTag = (tagToRemove: string) => {
+    setNewLessonTags(newLessonTags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleEditLesson = (lesson: any) => {
+    setEditingLessonId(lesson.id);
+    setNewLessonTitle(lesson.title);
+    setNewLessonType(lesson.type);
+    setNewLessonWebsite(lesson.website || '');
+    setNewLessonTags(lesson.tags || []);
+    setLessonDialogOpen(true);
+  };
+
+  const handleDeleteLesson = (lessonId: string) => {
+    setLessonsList(lessonsList.filter(l => l.id !== lessonId));
+    toast.success('Lesson deleted successfully');
+  };
+
+  const handleSaveLesson = () => {
+    if (editingLessonId) {
+      setLessonsList(lessonsList.map(l => l.id === editingLessonId ? {
+        ...l,
+        title: newLessonTitle,
+        type: newLessonType,
+        website: newLessonWebsite,
+        tags: newLessonTags,
+        updatedAt: new Date().toISOString()
+      } : l));
+      toast.success('Lesson updated successfully');
+    } else {
+      const newLesson = {
+        id: `new-lesson-${Date.now()}`,
+        courseId: courseId!,
+        title: newLessonTitle,
+        description: '',
+        type: newLessonType,
+        order: lessonsList.length + 1,
+        duration: 10,
+        content: {},
+        website: newLessonWebsite,
+        tags: newLessonTags,
+        attachments: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      setLessonsList([...lessonsList, newLesson]);
+      toast.success('Lesson added successfully');
+    }
     setLessonDialogOpen(false);
     setNewLessonTitle('');
     setNewLessonType('video');
-    toast.success('Lesson added successfully');
+    setNewLessonWebsite('');
+    setNewLessonTags([]);
+    setNewLessonTag('');
+    setEditingLessonId(null);
   };
 
   const handleAddAttendee = () => {
@@ -213,16 +260,6 @@ export default function CourseEditorPage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label htmlFor="website">Website {isPublished && <span className="text-destructive">*</span>}</Label>
-              <Input
-                id="website"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                placeholder="https://example.com"
-                className={cn("mt-1", isPublished && !website && "border-destructive")}
-              />
-            </div>
-            <div>
               <Label>Responsible</Label>
               <Select value={responsibleId} onValueChange={setResponsibleId}>
                 <SelectTrigger className="mt-1">
@@ -237,21 +274,7 @@ export default function CourseEditorPage() {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="tags">Tags</Label>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {course.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="gap-1">
-                  {tag}
-                  <button className="ml-1 hover:text-destructive">×</button>
-                </Badge>
-              ))}
-              <Button variant="outline" size="sm">
-                <Plus className="mr-1 h-3 w-3" />
-                Add Tag
-              </Button>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -277,7 +300,7 @@ export default function CourseEditorPage() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Lesson</DialogTitle>
+                  <DialogTitle>{editingLessonId ? 'Edit Lesson' : 'Add New Lesson'}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div>
@@ -313,12 +336,68 @@ export default function CourseEditorPage() {
                       })}
                     </div>
                   </div>
+
+                  {newLessonType === 'video' && (
+                    <>
+                      <div className="grid gap-2">
+                        <Label htmlFor="lesson-website">Website</Label>
+                        <Input
+                          id="lesson-website"
+                          value={newLessonWebsite}
+                          onChange={(e) => setNewLessonWebsite(e.target.value)}
+                          placeholder="https://example.com"
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label>Tags</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            value={newLessonTag}
+                            onChange={(e) => setNewLessonTag(e.target.value)}
+                            placeholder="Add a tag"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleAddLessonTag();
+                              }
+                            }}
+                          />
+                          <Button type="button" onClick={handleAddLessonTag} size="sm" variant="secondary">
+                            Add
+                          </Button>
+                        </div>
+                        {newLessonTags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {newLessonTags.map((tag) => (
+                              <Badge key={tag} variant="secondary" className="gap-1 pr-1">
+                                {tag}
+                                <button
+                                  onClick={() => handleRemoveLessonTag(tag)}
+                                  className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
                   <div className="flex justify-end gap-2 pt-4">
-                    <Button variant="outline" onClick={() => setLessonDialogOpen(false)}>
+                    <Button variant="outline" onClick={() => {
+                      setLessonDialogOpen(false);
+                      setEditingLessonId(null);
+                      setNewLessonTitle('');
+                      setNewLessonWebsite('');
+                      setNewLessonTags([]);
+                    }}>
                       Cancel
                     </Button>
-                    <Button disabled={!newLessonTitle.trim()} onClick={handleAddLesson}>
-                      Add Lesson
+                    <Button disabled={!newLessonTitle.trim()} onClick={handleSaveLesson}>
+                      {editingLessonId ? 'Save Changes' : 'Add Lesson'}
                     </Button>
                   </div>
                 </div>
@@ -350,10 +429,10 @@ export default function CourseEditorPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditLesson(lesson)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-destructive">
+                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteLesson(lesson.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
