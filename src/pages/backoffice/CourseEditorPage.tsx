@@ -15,7 +15,8 @@ import {
   FileText,
   Image,
   HelpCircle,
-  Share2
+  Share2,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';

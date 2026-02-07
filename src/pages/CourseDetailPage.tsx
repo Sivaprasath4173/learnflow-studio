@@ -6,7 +6,6 @@ import {
   Users,
   Star,
   BookOpen,
-  ChevronRight,
   CheckCircle,
   Lock,
   FileText,
@@ -14,14 +13,8 @@ import {
   HelpCircle,
   Search,
   Download,
-<<<<<<< HEAD
   ExternalLink,
   ChevronLeft
-=======
-  Download,
-  ExternalLink,
-  ArrowLeft
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -102,59 +95,14 @@ export default function CourseDetailPage() {
   return (
     <div className="py-8">
       <div className="container">
-<<<<<<< HEAD
         {/* Back Button */}
         <div className="mb-6">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 pl-0 hover:bg-transparent hover:text-primary">
             <ChevronLeft className="h-4 w-4" />
             Back
-=======
-<<<<<<< HEAD
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button variant="ghost" className="gap-2 pl-0 hover:bg-transparent hover:text-primary" asChild>
-            <Link to="/my-courses">
-              <ArrowLeft className="h-4 w-4" />
-              Back to My Courses
-            </Link>
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
           </Button>
         </div>
 
-        {/* Course Header */}
-        <div className="mb-8 grid gap-8 lg:grid-cols-[1fr_400px]">
-          {/* Left - Info */}
-          <div>
-            <div className="mb-4 flex flex-wrap gap-2">
-              {course.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-            <h1 className="mb-4 text-3xl font-bold lg:text-4xl">{course.title}</h1>
-            <p className="mb-6 text-lg text-muted-foreground">{course.description}</p>
-
-            {/* Stats */}
-            <div className="mb-6 flex flex-wrap items-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 fill-warning text-warning" />
-                <span className="font-semibold">{course.rating.toFixed(1)}</span>
-                <span className="text-muted-foreground">({course.reviewsCount} reviews)</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="h-5 w-5" />
-                {course.enrolledCount.toLocaleString()} enrolled
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <BookOpen className="h-5 w-5" />
-                {course.totalLessons} lessons
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-5 w-5" />
-                {formatDuration(course.totalDuration)}
-              </div>
-=======
         {/* Course Overview Section - Horizontal Layout */}
         <div className="mb-8 rounded-xl border border-border bg-card overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_320px]">
@@ -165,74 +113,29 @@ export default function CourseDetailPage() {
                 alt={course.title}
                 className="h-full w-full object-cover min-h-40"
               />
->>>>>>> 820846bcb1ca0359ba55ca5e32650fe7d7938e04
             </div>
 
             {/* Middle - Course Info */}
             <div className="p-6 flex flex-col justify-between">
-              {/* Course Label */}
-              <Badge className="w-fit mb-2">Course</Badge>
-              
-              {/* Course Title */}
-              <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
-              
-              {/* Short Description */}
-              <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+              <div>
+                {/* Course Label */}
+                <Badge className="w-fit mb-2">Course</Badge>
 
-              {/* Mobile Course Image */}
-              <div className="lg:hidden mt-4 rounded-lg overflow-hidden">
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="h-40 w-full object-cover"
-                />
+                {/* Course Title */}
+                <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
+
+                {/* Short Description */}
+                <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+
+                {/* Mobile Course Image */}
+                <div className="lg:hidden mt-4 rounded-lg overflow-hidden">
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="h-40 w-full object-cover"
+                  />
+                </div>
               </div>
-<<<<<<< HEAD
-              <div className="p-6">
-                {enrollment ? (
-                  <>
-                    <div className="mb-4">
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Your Progress</span>
-                        <span className="font-medium">{enrollment.progress}%</span>
-                      </div>
-                      <Progress value={enrollment.progress} className="h-2" />
-                    </div>
-                    <Button className="w-full" size="lg" asChild>
-                      <Link to={`/course/${course.id}/learn`}>
-                        <Play className="mr-2 h-5 w-5" />
-                        {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
-                      </Link>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    {course.accessRule === 'payment' && course.price ? (
-                      <>
-                        <div className="mb-4 text-center">
-                          <span className="text-3xl font-bold">₹{course.price}</span>
-                        </div>
-                        <Button className="w-full" size="lg">
-                          Buy Now
-                        </Button>
-                      </>
-                    ) : course.accessRule === 'invitation' ? (
-                      <Button className="w-full" size="lg" variant="outline" disabled>
-                        <Lock className="mr-2 h-5 w-5" />
-                        Invitation Only
-                      </Button>
-                    ) : isAuthenticated ? (
-                      <Button className="w-full" size="lg" onClick={handleEnroll}>
-                        Enroll Now - Free
-                      </Button>
-                    ) : (
-                      <Button className="w-full" size="lg" asChild>
-                        <Link to={`/login?redirect=/course/${courseId}`}>Sign In to Enroll</Link>
-                      </Button>
-                    )}
-                  </>
-                )}
-=======
             </div>
 
             {/* Right - Progress and Stats */}
@@ -241,7 +144,6 @@ export default function CourseDetailPage() {
               <div className="mb-4 text-center">
                 <p className="text-2xl font-bold">{enrollment?.progress || 0}%</p>
                 <p className="text-xs text-muted-foreground">Completed</p>
->>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
               </div>
 
               {/* Progress Bar */}
@@ -265,7 +167,7 @@ export default function CourseDetailPage() {
 
               {/* CTA Button */}
               {enrollment && (
-                <Button className="w-full mt-4" size="sm" disabled>
+                <Button className="w-full mt-4" size="sm" onClick={() => navigate(`/course/${course.id}/learn`)}>
                   <Play className="mr-2 h-4 w-4" />
                   {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
                 </Button>
@@ -282,12 +184,12 @@ export default function CourseDetailPage() {
                       Invitation Only
                     </Button>
                   ) : isAuthenticated ? (
-                    <Button className="w-full mt-4" size="sm">
+                    <Button className="w-full mt-4" size="sm" onClick={handleEnroll}>
                       Enroll Now - Free
                     </Button>
                   ) : (
                     <Button className="w-full mt-4" size="sm" asChild>
-                      <Link to="/login">Sign In to Enroll</Link>
+                      <Link to={`/login?redirect=/course/${courseId}`}>Sign In to Enroll</Link>
                     </Button>
                   )}
                 </>
@@ -342,7 +244,7 @@ export default function CourseDetailPage() {
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                           {/* Lesson Number */}
                           <span className="text-sm font-semibold text-muted-foreground"># {index + 1}</span>
-                          
+
                           {/* Lesson Title */}
                           <p className={cn(
                             "text-sm font-medium",
