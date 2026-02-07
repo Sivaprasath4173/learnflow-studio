@@ -132,6 +132,10 @@ export default {
           from: { transform: "translateY(0px)" },
           to: { transform: "translateY(-2px)" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -145,6 +149,8 @@ export default {
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "points-pop": "points-pop 0.5s ease-out forwards",
         "hover-lift": "hover-lift 0.15s ease-out forwards",
+        "float": "float 3s ease-in-out infinite",
+        "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
       },
       boxShadow: {
         soft: "0 4px 12px rgba(0,0,0,0.06)",

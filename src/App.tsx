@@ -27,6 +27,7 @@ import BackofficeDashboard from "@/pages/backoffice/BackofficeDashboard";
 import BackofficeCoursesPage from "@/pages/backoffice/BackofficeCoursesPage";
 import CourseEditorPage from "@/pages/backoffice/CourseEditorPage";
 import BackofficeReportsPage from "@/pages/backoffice/BackofficeReportsPage";
+import BackofficeLearnersPage from "@/pages/backoffice/BackofficeLearnersPage";
 import BackofficeSettingsPage from "@/pages/backoffice/SettingsPage";
 
 const queryClient = new QueryClient();
@@ -117,7 +118,7 @@ function AppRoutes() {
         <Route index element={<BackofficeDashboard />} />
         <Route path="courses" element={<BackofficeCoursesPage />} />
         <Route path="courses/:courseId" element={<CourseEditorPage />} />
-        <Route path="learners" element={<div className="p-8">Learners Management (Coming Soon)</div>} />
+        <Route path="learners" element={<BackofficeLearnersPage />} />
         <Route path="reports" element={<BackofficeReportsPage />} />
         <Route path="settings" element={<BackofficeSettingsPage />} />
       </Route>

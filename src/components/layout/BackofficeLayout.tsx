@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { DashboardGreeting } from './DashboardGreeting';
 import {
   GraduationCap,
   LayoutDashboard,
@@ -162,9 +163,7 @@ export function BackofficeLayout() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1" />
-          <span className="text-sm text-muted-foreground">
-            Welcome back, <span className="font-medium text-foreground">{user?.name}</span>
-          </span>
+          <DashboardGreeting name={user?.name || 'User'} className="mr-0" />
         </header>
 
         {/* Page Content */}

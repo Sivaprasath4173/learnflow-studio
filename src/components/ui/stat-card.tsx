@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from 'react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +12,35 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, icon: Icon, variant, className, description }: StatCardProps) {
+    const [displayValue, setDisplayValue] = useState(typeof value === 'number' ? 0 : value);
+
+    useEffect(() => {
+        if (typeof value !== 'number') return;
+
+        let start = 0;
+        const end = value;
+        const duration = 2000;
+        const startTime = performance.now();
+
+        const easeOutExpo = (x: number): number => {
+            return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+        };
+
+        const update = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            const current = Math.floor(easeOutExpo(progress) * (end - start) + start);
+            setDisplayValue(current);
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        };
+
+        requestAnimationFrame(update);
+    }, [value]);
+
     const variants = {
         purple: {
             gradient: "from-violet-500/10 via-purple-500/5 to-transparent",
@@ -72,7 +101,9 @@ export function StatCard({ title, value, icon: Icon, variant, className, descrip
             <div className="relative flex items-center justify-between">
                 <div className="space-y-1">
                     <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">{title}</p>
-                    <h3 className="text-3xl font-bold tracking-tight text-foreground">{value}</h3>
+                    <h3 className="text-3xl font-bold tracking-tight text-foreground">
+                        {typeof value === 'number' ? displayValue.toLocaleString() : value}
+                    </h3>
                     {description && (
                         <p className="text-xs text-muted-foreground/80 font-medium">{description}</p>
                     )}
