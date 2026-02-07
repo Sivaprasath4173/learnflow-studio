@@ -384,6 +384,10 @@ export default function CourseDetailPage() {
               </div>
             </div>
           </TabsContent>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4a52212 (b-3)
           <TabsContent value="reviews">
             <div className="space-y-6">
               {/* Rating Summary */}
