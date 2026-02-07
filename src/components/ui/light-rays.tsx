@@ -41,6 +41,7 @@ export function LightRays({
         if (!ctx) return;
 
         const resizeCanvas = () => {
+
             const dpr = Math.min(window.devicePixelRatio, 1.5);
             canvas.width = canvas.offsetWidth * dpr;
             canvas.height = canvas.offsetHeight * dpr;
