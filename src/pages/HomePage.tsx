@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap, BookOpen, Users, Award, ArrowRight, Play, CheckCircle } from 'lucide-react';
+import { GraduationCap, BookOpen, Award, ArrowRight, Play, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { InteractiveCard, HoverCard } from '@/components/ui/interactive-card';
 import { LightRays } from '@/components/ui/light-rays';
@@ -25,6 +25,7 @@ export default function HomePage() {
 
         {/* Premium Spotlight Effect */}
         <LightRays
+          raysOrigin="top-center"
           raysColor="#7c3aed"
           lightSpread={0.55}
           rayLength={0.75}
@@ -168,7 +169,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* How It Works Section */}
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-12">

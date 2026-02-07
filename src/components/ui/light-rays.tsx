@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 
 interface LightRaysProps {
+    raysOrigin?: 'center' | 'top' | 'top-center';
     raysColor?: string;
     lightSpread?: number;
     rayLength?: number;
@@ -14,6 +15,7 @@ interface LightRaysProps {
 }
 
 export function LightRays({
+    raysOrigin = 'top-center',
     raysColor = '#7c3aed',
     lightSpread = 0.6,
     rayLength = 0.8,
@@ -39,6 +41,7 @@ export function LightRays({
         if (!ctx) return;
 
         const resizeCanvas = () => {
+
             const dpr = Math.min(window.devicePixelRatio, 1.5);
             canvas.width = canvas.offsetWidth * dpr;
             canvas.height = canvas.offsetHeight * dpr;
@@ -63,6 +66,10 @@ export function LightRays({
         const render = () => {
             const width = canvas.offsetWidth;
             const height = canvas.offsetHeight;
+            if (width === 0 || height === 0) {
+                animationRef.current = requestAnimationFrame(render);
+                return;
+            }
 
             // Very smooth mouse easing
             smoothMouseRef.current.x += (mousePos.x - smoothMouseRef.current.x) * 0.015;
@@ -70,16 +77,20 @@ export function LightRays({
 
             ctx.clearRect(0, 0, width, height);
 
-            // Calculate mouse-influenced center (very subtle)
+            // Calculate mouse-influenced center
             const mouseOffsetX = followMouse ? (smoothMouseRef.current.x - 0.5) * width * mouseInfluence : 0;
             const centerX = width / 2 + mouseOffsetX;
-            const originY = -height * 0.1;
+
+            // Handle raysOrigin
+            let originY = -height * 0.1;
+            if (raysOrigin === 'center') originY = height / 2;
+            else if (raysOrigin === 'top') originY = 0;
 
             const baseAlpha = intensity * saturation * fadeDistance;
             const spotlightWidth = width * lightSpread;
             const spotlightHeight = height * rayLength;
 
-            // Layer 1: Wide ambient glow (very soft)
+            // Layer 1: Wide ambient glow
             const ambientGlow = ctx.createRadialGradient(
                 centerX, originY,
                 0,
@@ -95,7 +106,7 @@ export function LightRays({
             ctx.fillStyle = ambientGlow;
             ctx.fillRect(0, 0, width, height);
 
-            // Layer 2: Main spotlight cone (soft edges)
+            // Layer 2: Main spotlight cone
             ctx.save();
 
             // Create soft cone path
@@ -103,26 +114,26 @@ export function LightRays({
             const topWidth = spotlightWidth * 0.15;
             const bottomWidth = spotlightWidth * 1.2;
 
-            ctx.moveTo(centerX - topWidth, 0);
-            ctx.lineTo(centerX + topWidth, 0);
+            ctx.moveTo(centerX - topWidth, originY > 0 ? originY : 0);
+            ctx.lineTo(centerX + topWidth, originY > 0 ? originY : 0);
 
-            // Smooth bezier curves for organic, soft edges
+            // Smooth bezier curves
             ctx.bezierCurveTo(
-                centerX + topWidth * 2, spotlightHeight * 0.25,
-                centerX + bottomWidth * 0.7, spotlightHeight * 0.6,
-                centerX + bottomWidth, spotlightHeight * 1.2
+                centerX + topWidth * 2, originY + spotlightHeight * 0.25,
+                centerX + bottomWidth * 0.7, originY + spotlightHeight * 0.6,
+                centerX + bottomWidth, originY + spotlightHeight * 1.2
             );
-            ctx.lineTo(centerX - bottomWidth, spotlightHeight * 1.2);
+            ctx.lineTo(centerX - bottomWidth, originY + spotlightHeight * 1.2);
             ctx.bezierCurveTo(
-                centerX - bottomWidth * 0.7, spotlightHeight * 0.6,
-                centerX - topWidth * 2, spotlightHeight * 0.25,
-                centerX - topWidth, 0
+                centerX - bottomWidth * 0.7, originY + spotlightHeight * 0.6,
+                centerX - topWidth * 2, originY + spotlightHeight * 0.25,
+                centerX - topWidth, originY > 0 ? originY : 0
             );
             ctx.closePath();
             ctx.clip();
 
-            // Multi-stop gradient for smooth fade
-            const coneGradient = ctx.createLinearGradient(centerX, 0, centerX, spotlightHeight);
+            // Multi-stop gradient
+            const coneGradient = ctx.createLinearGradient(centerX, originY > 0 ? originY : 0, centerX, originY + spotlightHeight);
 
             coneGradient.addColorStop(0, `rgba(${Math.min(255, rgb.r + 80)}, ${Math.min(255, rgb.g + 80)}, ${Math.min(255, rgb.b + 80)}, ${baseAlpha * 0.6})`);
             coneGradient.addColorStop(0.1, `rgba(${Math.min(255, rgb.r + 40)}, ${Math.min(255, rgb.g + 40)}, ${Math.min(255, rgb.b + 40)}, ${baseAlpha * 0.4})`);
@@ -136,11 +147,11 @@ export function LightRays({
 
             ctx.restore();
 
-            // Layer 3: Center highlight (subtle bright point)
+            // Layer 3: Center highlight
             const centerHighlight = ctx.createRadialGradient(
-                centerX, 0,
+                centerX, originY > 0 ? originY : 0,
                 0,
-                centerX, 0,
+                centerX, originY > 0 ? originY : 0,
                 spotlightWidth * 0.4
             );
 
@@ -152,11 +163,11 @@ export function LightRays({
             ctx.fillStyle = centerHighlight;
             ctx.fillRect(0, 0, width, height);
 
-            // Layer 4: Soft bloom effect (very subtle)
+            // Layer 4: Soft bloom effect
             const bloom = ctx.createRadialGradient(
-                centerX, height * 0.2,
+                centerX, originY + height * 0.2,
                 0,
-                centerX, height * 0.3,
+                centerX, originY + height * 0.3,
                 spotlightWidth * 0.6
             );
 
@@ -178,7 +189,7 @@ export function LightRays({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
+    }, [raysOrigin, raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
 
     useEffect(() => {
         if (!followMouse) return;

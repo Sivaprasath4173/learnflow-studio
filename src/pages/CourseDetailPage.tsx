@@ -245,7 +245,7 @@ export default function CourseDetailPage() {
                 </Button>
               )}
 
-              {!hasAccess && (
+              {!enrollment && (
                 <>
                   {course.accessRule === 'payment' && course.price ? (
                     <Button className="w-full mt-4" size="sm" onClick={handlePurchase}>
