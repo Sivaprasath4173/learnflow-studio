@@ -27,6 +27,7 @@ export function LearnerNavbar() {
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
 
       <div className="container flex h-16 items-center justify-between">
+<<<<<<< HEAD
         <div className="flex items-center gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
@@ -36,6 +37,15 @@ export function LearnerNavbar() {
             <span>LearnSphere</span>
           </Link>
         </div>
+=======
+        {/* Logo */}
+        <Link to={isAuthenticated ? "/my-courses" : "/"} className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
+            <GraduationCap className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span>LearnSphere</span>
+        </Link>
+>>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
@@ -85,13 +95,37 @@ export function LearnerNavbar() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/profile">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
+                    <Link
+                      to="/courses"
+                      className={cn(
+                        "w-full cursor-pointer",
+                        isActive('/courses') ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Courses
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/settings">
+                    <Link
+                      to="/my-courses"
+                      className={cn(
+                        "w-full cursor-pointer",
+                        isActive('/my-courses') ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      <GraduationCap className="mr-2 h-4 w-4" />
+                      My Courses
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/settings"
+                      className={cn(
+                        "w-full cursor-pointer",
+                        isActive('/settings') ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                      )}
+                    >
                       <Settings className="mr-2 h-4 w-4" />
                       Settings
                     </Link>
@@ -131,20 +165,30 @@ export function LearnerNavbar() {
       {mobileMenuOpen && (
         <div className="border-t border-border md:hidden">
           <nav className="container flex flex-col gap-2 py-4">
-            {navLinks.map(({ href, label, icon: Icon }) => (
+            <Link
+              to="/courses"
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                isActive('/courses') ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+              )}
+            >
+              <BookOpen className="h-4 w-4" />
+              Courses
+            </Link>
+            {isAuthenticated && (
               <Link
-                key={href}
-                to={href}
+                to="/my-courses"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  isActive(href) ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+                  isActive('/my-courses') ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                 )}
               >
-                <Icon className="h-4 w-4" />
-                {label}
+                <GraduationCap className="h-4 w-4" />
+                My Courses
               </Link>
-            ))}
+            )}
             <div className="my-2 h-px bg-border" />
             {isAuthenticated ? (
               <>

@@ -14,8 +14,14 @@ import {
   HelpCircle,
   Search,
   Download,
+<<<<<<< HEAD
   ExternalLink,
   ChevronLeft
+=======
+  Download,
+  ExternalLink,
+  ArrowLeft
+>>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -96,11 +102,22 @@ export default function CourseDetailPage() {
   return (
     <div className="py-8">
       <div className="container">
+<<<<<<< HEAD
         {/* Back Button */}
         <div className="mb-6">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 pl-0 hover:bg-transparent hover:text-primary">
             <ChevronLeft className="h-4 w-4" />
             Back
+=======
+<<<<<<< HEAD
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button variant="ghost" className="gap-2 pl-0 hover:bg-transparent hover:text-primary" asChild>
+            <Link to="/my-courses">
+              <ArrowLeft className="h-4 w-4" />
+              Back to My Courses
+            </Link>
+>>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
           </Button>
         </div>
 
@@ -137,32 +154,40 @@ export default function CourseDetailPage() {
                 <Clock className="h-5 w-5" />
                 {formatDuration(course.totalDuration)}
               </div>
+=======
+        {/* Course Overview Section - Horizontal Layout */}
+        <div className="mb-8 rounded-xl border border-border bg-card overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_320px]">
+            {/* Left - Course Cover */}
+            <div className="hidden lg:block">
+              <img
+                src={course.image}
+                alt={course.title}
+                className="h-full w-full object-cover min-h-40"
+              />
+>>>>>>> 820846bcb1ca0359ba55ca5e32650fe7d7938e04
             </div>
 
-            {/* Instructor */}
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="gradient-primary text-primary-foreground">
-                  {course.instructorName.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm text-muted-foreground">Created by</p>
-                <p className="font-medium">{course.instructorName}</p>
-              </div>
-            </div>
-          </div>
+            {/* Middle - Course Info */}
+            <div className="p-6 flex flex-col justify-between">
+              {/* Course Label */}
+              <Badge className="w-fit mb-2">Course</Badge>
+              
+              {/* Course Title */}
+              <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
+              
+              {/* Short Description */}
+              <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
 
-          {/* Right - Card */}
-          <div className="lg:sticky lg:top-24">
-            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-lg">
-              <div className="aspect-video">
+              {/* Mobile Course Image */}
+              <div className="lg:hidden mt-4 rounded-lg overflow-hidden">
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="h-full w-full object-cover"
+                  className="h-40 w-full object-cover"
                 />
               </div>
+<<<<<<< HEAD
               <div className="p-6">
                 {enrollment ? (
                   <>
@@ -207,104 +232,101 @@ export default function CourseDetailPage() {
                     )}
                   </>
                 )}
+=======
+            </div>
+
+            {/* Right - Progress and Stats */}
+            <div className="p-6 border-l border-border">
+              {/* Progress Percentage */}
+              <div className="mb-4 text-center">
+                <p className="text-2xl font-bold">{enrollment?.progress || 0}%</p>
+                <p className="text-xs text-muted-foreground">Completed</p>
+>>>>>>> 83200f3bfc5540e6a88b90b0aa91527fffb4b24b
               </div>
+
+              {/* Progress Bar */}
+              <Progress value={enrollment?.progress || 0} className="mb-6 h-2" />
+
+              {/* Stat Cards - Horizontal Row */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="border border-border rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Content</p>
+                  <p className="text-lg font-bold mt-1">{lessons.length}</p>
+                </div>
+                <div className="border border-border rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Completed</p>
+                  <p className="text-lg font-bold mt-1">{completedLessonsCount}</p>
+                </div>
+                <div className="border border-border rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Incomplete</p>
+                  <p className="text-lg font-bold mt-1">{incompleteLessonsCount}</p>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              {enrollment && (
+                <Button className="w-full mt-4" size="sm" disabled>
+                  <Play className="mr-2 h-4 w-4" />
+                  {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
+                </Button>
+              )}
+
+              {!enrollment && (
+                <>
+                  {course.accessRule === 'payment' && course.price ? (
+                    <Button className="w-full mt-4" size="sm">
+                      Buy Now (${course.price})
+                    </Button>
+                  ) : course.accessRule === 'invitation' ? (
+                    <Button className="w-full mt-4" size="sm" variant="outline" disabled>
+                      Invitation Only
+                    </Button>
+                  ) : isAuthenticated ? (
+                    <Button className="w-full mt-4" size="sm">
+                      Enroll Now - Free
+                    </Button>
+                  ) : (
+                    <Button className="w-full mt-4" size="sm" asChild>
+                      <Link to="/login">Sign In to Enroll</Link>
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="overview">
+        <Tabs defaultValue="overview" className="mt-12">
           <TabsList className="mb-6">
             <TabsTrigger value="overview">Course Overview</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
+            <TabsTrigger value="reviews">Ratings and Reviews ({reviews.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
-            <div className="space-y-8">
-              {/* Course Info Section */}
-              <div className="rounded-xl border border-border bg-card overflow-hidden">
-                <div className="aspect-video w-full">
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="h-full w-full object-cover"
+            <div className="space-y-6">
+              {/* Content Header with Search */}
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-lg font-semibold">{lessons.length} Contents</h3>
+                <div className="relative w-full max-w-xs">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search content"
+                    value={searchLesson}
+                    onChange={(e) => setSearchLesson(e.target.value)}
+                    className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
-                <div className="p-6">
-                  <h2 className="mb-3 text-2xl font-bold">{course.title}</h2>
-                  <p className="mb-6 text-muted-foreground">{course.description}</p>
-                </div>
               </div>
 
-              {/* Progress Section */}
-              {enrollment && (
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <h3 className="mb-4 font-semibold">Your Progress</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Completion</span>
-                        <span className="font-medium">{enrollment.progress}%</span>
-                      </div>
-                      <Progress value={enrollment.progress} className="h-2" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Statistics Section */}
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Lessons</p>
-                      <p className="mt-2 text-2xl font-bold">{lessons.length}</p>
-                    </div>
-                    <BookOpen className="h-8 w-8 text-muted-foreground opacity-50" />
-                  </div>
-                </div>
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Completed</p>
-                      <p className="mt-2 text-2xl font-bold">{completedLessonsCount}</p>
-                    </div>
-                    <CheckCircle className="h-8 w-8 text-success opacity-50" />
-                  </div>
-                </div>
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Remaining</p>
-                      <p className="mt-2 text-2xl font-bold">{incompleteLessonsCount}</p>
-                    </div>
-                    <BookOpen className="h-8 w-8 text-muted-foreground opacity-50" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Lessons List Section */}
-              <div className="rounded-xl border border-border bg-card">
-                {/* Search */}
-                <div className="border-b border-border p-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder="Search lessons..."
-                      value={searchLesson}
-                      onChange={(e) => setSearchLesson(e.target.value)}
-                      className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                {/* Lesson List */}
-                <div className="divide-y divide-border">
-                  {filteredLessons.map((lesson, index) => {
+              {/* Lessons List */}
+              <div className="rounded-xl border border-border bg-card divide-y divide-border">
+                {filteredLessons.length > 0 ? (
+                  filteredLessons.map((lesson, index) => {
                     const Icon = getLessonIcon(lesson.type);
                     const isCompleted = index < completedLessonsCount;
+                    const isInProgress = !isCompleted && index === completedLessonsCount;
                     const isLocked = !enrollment && !isCompleted;
 
                     return (
@@ -313,95 +335,50 @@ export default function CourseDetailPage() {
                         onClick={() => !isLocked && handleLessonClick(lesson)}
                         disabled={isLocked}
                         className={cn(
-                          "flex w-full items-center gap-4 p-4 transition-colors text-left",
+                          "flex w-full items-center justify-between gap-4 px-6 py-4 transition-colors text-left",
                           isLocked ? "opacity-60 cursor-not-allowed" : "hover:bg-muted/50 cursor-pointer"
                         )}
                       >
-                        <div className={cn(
-                          "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg",
-                          isCompleted ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
-                        )}>
-                          {isCompleted ? (
-                            <CheckCircle className="h-5 w-5" />
-                          ) : (
-                            <Icon className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          {/* Lesson Number */}
+                          <span className="text-sm font-semibold text-muted-foreground"># {index + 1}</span>
+                          
+                          {/* Lesson Title */}
                           <p className={cn(
-                            "font-medium truncate",
-                            isCompleted && "text-muted-foreground"
+                            "text-sm font-medium",
+                            isCompleted ? "text-muted-foreground" : "text-primary"
                           )}>
                             {lesson.title}
                           </p>
-                          <p className="text-sm text-muted-foreground capitalize">
-                            {lesson.type} • {lesson.duration} min
-                          </p>
                         </div>
-                        {isLocked ? (
-                          <Lock className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        )}
+
+                        {/* Status Indicator */}
+                        <div className="flex items-center gap-3">
+                          {isCompleted ? (
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success/10">
+                              <CheckCircle className="h-5 w-5 text-success" />
+                            </div>
+                          ) : isInProgress ? (
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-primary">
+                              <div className="h-2 w-2 rounded-full bg-primary" />
+                            </div>
+                          ) : (
+                            <div className="h-6 w-6 rounded-full border-2 border-muted-foreground" />
+                          )}
+                        </div>
                       </button>
                     );
-                  })}
-                </div>
+                  })
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <Search className="mb-3 h-8 w-8 text-muted-foreground opacity-50" />
+                    <p className="text-sm text-muted-foreground">No content found</p>
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="content">
-            <div className="rounded-xl border border-border bg-card">
-              {/* Lesson List */}
-              <div className="divide-y divide-border">
-                {filteredLessons.map((lesson, index) => {
-                  const Icon = getLessonIcon(lesson.type);
-                  const isCompleted = index < completedLessonsCount;
-                  const isLocked = !enrollment && !isCompleted;
-
-                  return (
-                    <button
-                      key={lesson.id}
-                      onClick={() => !isLocked && handleLessonClick(lesson)}
-                      disabled={isLocked}
-                      className={cn(
-                        "flex w-full items-center gap-4 p-4 transition-colors text-left",
-                        isLocked ? "opacity-60 cursor-not-allowed" : "hover:bg-muted/50 cursor-pointer"
-                      )}
-                    >
-                      <div className={cn(
-                        "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg",
-                        isCompleted ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
-                      )}>
-                        {isCompleted ? (
-                          <CheckCircle className="h-5 w-5" />
-                        ) : (
-                          <Icon className="h-5 w-5" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={cn(
-                          "font-medium truncate",
-                          isCompleted && "text-muted-foreground"
-                        )}>
-                          {lesson.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {lesson.type} • {lesson.duration} min
-                        </p>
-                      </div>
-                      {isLocked ? (
-                        <Lock className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </TabsContent>
           <TabsContent value="reviews">
             <div className="space-y-6">
               {/* Rating Summary */}
@@ -429,40 +406,47 @@ export default function CourseDetailPage() {
 
               {/* Reviews List */}
               <div className="space-y-4">
-                {reviews.map((review) => (
-                  <div key={review.id} className="rounded-xl border border-border bg-card p-6">
-                    <div className="mb-4 flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={review.userAvatar} />
-                          <AvatarFallback className="gradient-primary text-primary-foreground">
-                            {review.userName.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{review.userName}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {new Date(review.createdAt).toLocaleDateString()}
-                          </p>
+                {reviews.length > 0 ? (
+                  reviews.map((review) => (
+                    <div key={review.id} className="rounded-xl border border-border bg-card p-6">
+                      <div className="mb-4 flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={review.userAvatar} />
+                            <AvatarFallback className="gradient-primary text-primary-foreground">
+                              {review.userName.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{review.userName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={cn(
+                                "h-4 w-4",
+                                star <= review.rating
+                                  ? "fill-warning text-warning"
+                                  : "text-muted"
+                              )}
+                            />
+                          ))}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={cn(
-                              "h-4 w-4",
-                              star <= review.rating
-                                ? "fill-warning text-warning"
-                                : "text-muted"
-                            )}
-                          />
-                        ))}
-                      </div>
+                      <p className="text-muted-foreground">{review.comment}</p>
                     </div>
-                    <p className="text-muted-foreground">{review.comment}</p>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-border bg-card">
+                    <Star className="mb-3 h-8 w-8 text-muted-foreground opacity-50" />
+                    <p className="text-muted-foreground">No reviews yet</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </TabsContent>

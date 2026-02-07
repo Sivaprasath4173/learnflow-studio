@@ -117,27 +117,15 @@ export function BackofficeLayout() {
               </div>
             </div>
           )}
-          <div className={cn("flex gap-2 mt-2", collapsed && "flex-col")}>
             <Button
-              variant="ghost"
-              size={collapsed ? "icon" : "sm"}
-              className={cn(!collapsed && "flex-1")}
-              asChild
-            >
-              <Link to="/">
-                <GraduationCap className="h-4 w-4" />
-                {!collapsed && <span className="ml-2">Learner View</span>}
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size={collapsed ? "icon" : "icon"}
-              className="text-destructive hover:text-destructive"
-              onClick={logout}
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
+            variant="ghost"
+            size={collapsed ? "icon" : "sm"}
+            className="text-destructive hover:text-destructive w-full"
+            onClick={logout}
+          >
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span className="ml-2">Logout</span>}
+          </Button>
         </div>
       </aside>
 
