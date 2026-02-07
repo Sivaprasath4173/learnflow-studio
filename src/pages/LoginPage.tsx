@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { GraduationCap, Mail, Lock, Eye, EyeOff, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,6 +40,15 @@ export default function LoginPage() {
       {/* Left - Form */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
+          {/* Back to Home Link */}
+          <Link
+            to="/"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Back to Home
+          </Link>
+
           {/* Logo */}
           <div className="mb-8">
             <div className="flex items-center gap-2">
