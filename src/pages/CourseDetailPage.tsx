@@ -168,20 +168,9 @@ export default function CourseDetailPage() {
 
             {/* Middle - Course Info */}
             <div className="p-6 flex flex-col justify-between">
-<<<<<<< HEAD
               <div>
                 {/* Course Label */}
                 <Badge className="w-fit mb-2">Course</Badge>
-=======
-              {/* Course Label */}
-              <Badge className="w-fit mb-2">Course</Badge>
-
-              {/* Course Title */}
-              <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
-
-              {/* Short Description */}
-              <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
->>>>>>> dc47164d3d08ff14c2250c235b972a9f21c59b47
 
                 {/* Course Title */}
                 <h1 className="text-2xl font-bold mb-3">{course.title}</h1>

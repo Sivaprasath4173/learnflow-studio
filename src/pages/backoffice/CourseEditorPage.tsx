@@ -27,6 +27,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -75,6 +76,67 @@ export default function CourseEditorPage() {
   const [newLessonTags, setNewLessonTags] = useState<string[]>([]);
   const [newLessonTag, setNewLessonTag] = useState('');
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+
+  // Quiz State
+  const [quizQuestions, setQuizQuestions] = useState([
+    {
+      id: 'q1',
+      text: '',
+      choices: [
+        { id: 'c1', text: '', isCorrect: false },
+        { id: 'c2', text: '', isCorrect: false },
+        { id: 'c3', text: '', isCorrect: false },
+      ]
+    }
+  ]);
+  const [activeQuizView, setActiveQuizView] = useState<string>('q1');
+  const [rewards, setRewards] = useState({
+    first: 10,
+    second: 7,
+    third: 5,
+    fourth: 2
+  });
+
+  const handleAddQuestion = () => {
+    const newId = `q${Date.now()}`;
+    setQuizQuestions([
+      ...quizQuestions,
+      {
+        id: newId,
+        text: '',
+        choices: [
+          { id: `c${Date.now()}-1`, text: '', isCorrect: false },
+          { id: `c${Date.now()}-2`, text: '', isCorrect: false },
+        ]
+      }
+    ]);
+    setActiveQuizView(newId);
+  };
+
+  const updateQuestionText = (id: string, text: string) => {
+    setQuizQuestions(quizQuestions.map(q => q.id === id ? { ...q, text } : q));
+  };
+
+  const updateChoice = (qId: string, cId: string, field: string, value: any) => {
+    setQuizQuestions(quizQuestions.map(q => q.id === qId ? {
+      ...q,
+      choices: q.choices.map(c => c.id === cId ? { ...c, [field]: value } : c)
+    } : q));
+  };
+
+  const addChoice = (qId: string) => {
+    setQuizQuestions(quizQuestions.map(q => q.id === qId ? {
+      ...q,
+      choices: [...q.choices, { id: `c${Date.now()}`, text: '', isCorrect: false }]
+    } : q));
+  };
+
+  const removeChoice = (qId: string, cId: string) => {
+    setQuizQuestions(quizQuestions.map(q => q.id === qId ? {
+      ...q,
+      choices: q.choices.filter(c => c.id !== cId)
+    } : q));
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -527,33 +589,190 @@ export default function CourseEditorPage() {
         </TabsContent>
 
         {/* Quiz Tab */}
-        <TabsContent value="quiz">
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="mb-4 text-lg font-semibold">Quiz Reward Settings</h3>
-            <p className="mb-6 text-muted-foreground">
-              Configure how many points learners earn based on their quiz attempts
-            </p>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { label: '1st Attempt', default: 30 },
-                { label: '2nd Attempt', default: 20 },
-                { label: '3rd Attempt', default: 10 },
-                { label: '4th+ Attempt', default: 5 },
-              ].map((item) => (
-                <div key={item.label}>
-                  <Label>{item.label}</Label>
-                  <div className="relative mt-2">
-                    <Input
-                      type="number"
-                      defaultValue={item.default}
-                      className="pr-12"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      pts
-                    </span>
+        <TabsContent value="quiz" className="h-[600px] flex flex-col">
+          <div className="flex-1 flex rounded-xl border border-border bg-card overflow-hidden">
+            {/* Sidebar */}
+            <div className="w-64 border-r border-border bg-muted/20 flex flex-col">
+              <div className="p-4 border-b border-border">
+                <h3 className="font-semibold">Question List</h3>
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                {quizQuestions.map((q, idx) => (
+                  <button
+                    key={q.id}
+                    onClick={() => setActiveQuizView(q.id)}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center justify-between group",
+                      activeQuizView === q.id
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <span>Question {idx + 1}</span>
+                    {quizQuestions.length > 1 && (
+                      <Trash2
+                        className="h-3 w-3 opacity-0 group-hover:opacity-100 text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setQuizQuestions(quizQuestions.filter(item => item.id !== q.id));
+                          if (activeQuizView === q.id) setActiveQuizView('rewards');
+                        }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="p-4 border-t border-border space-y-2">
+                <Button onClick={handleAddQuestion} className="w-full bg-indigo-500 hover:bg-indigo-600 font-medium">
+                  Add Question
+                </Button>
+                <Button
+                  onClick={() => setActiveQuizView('rewards')}
+                  className={cn(
+                    "w-full font-medium transition-colors",
+                    activeQuizView === 'rewards'
+                      ? "bg-purple-600 text-white hover:bg-purple-700"
+                      : "bg-purple-100 text-purple-700 hover:bg-purple-200"
+                  )}
+                >
+                  Rewards
+                </Button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 bg-background p-8 overflow-y-auto">
+              {activeQuizView === 'rewards' ? (
+                <div className="max-w-xl mx-auto">
+                  <h2 className="text-xl font-bold mb-8">Rewards settings</h2>
+                  <div className="space-y-6">
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base text-yellow-600">First try :</Label>
+                        <div className="relative w-32">
+                          <Input
+                            type="number"
+                            value={rewards.first}
+                            onChange={(e) => setRewards({ ...rewards, first: parseInt(e.target.value) })}
+                            className="pr-12 text-center"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-yellow-600">points</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base text-yellow-600">Second try :</Label>
+                        <div className="relative w-32">
+                          <Input
+                            type="number"
+                            value={rewards.second}
+                            onChange={(e) => setRewards({ ...rewards, second: parseInt(e.target.value) })}
+                            className="pr-12 text-center"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-yellow-600">points</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base text-yellow-600">Third try :</Label>
+                        <div className="relative w-32">
+                          <Input
+                            type="number"
+                            value={rewards.third}
+                            onChange={(e) => setRewards({ ...rewards, third: parseInt(e.target.value) })}
+                            className="pr-12 text-center"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-yellow-600">points</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base text-yellow-600">Fourth Try and more :</Label>
+                        <div className="relative w-32">
+                          <Input
+                            type="number"
+                            value={rewards.fourth}
+                            onChange={(e) => setRewards({ ...rewards, fourth: parseInt(e.target.value) })}
+                            className="pr-12 text-center"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-yellow-600">points</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
+              ) : (
+                (() => {
+                  const activeQuestion = quizQuestions.find(q => q.id === activeQuizView);
+                  const index = quizQuestions.findIndex(q => q.id === activeQuizView);
+
+                  if (!activeQuestion) return <div className="text-center text-muted-foreground">Select a question to edit</div>;
+
+                  return (
+                    <div className="max-w-3xl mx-auto space-y-8">
+                      {/* Question Header */}
+                      <div className="flex items-baseline gap-4">
+                        <span className="text-2xl font-bold">{index + 1}.</span>
+                        <div className="flex-1">
+                          <Input
+                            value={activeQuestion.text}
+                            onChange={(e) => updateQuestionText(activeQuestion.id, e.target.value)}
+                            className="text-lg border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary bg-transparent placeholder:text-muted-foreground/50"
+                            placeholder="Write your question here"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Answers */}
+                      <div>
+                        <div className="grid grid-cols-[1fr,80px,40px] gap-4 mb-4 px-2 text-sm font-medium text-muted-foreground">
+                          <div>Choices</div>
+                          <div className="text-center">Correct</div>
+                          <div></div>
+                        </div>
+                        <div className="space-y-3">
+                          {activeQuestion.choices.map((choice) => (
+                            <div key={choice.id} className="grid grid-cols-[1fr,80px,40px] items-center gap-4 p-2 rounded-lg hover:bg-muted/30 group">
+                              <Input
+                                value={choice.text}
+                                onChange={(e) => updateChoice(activeQuestion.id, choice.id, 'text', e.target.value)}
+                                className="bg-transparent"
+                                placeholder={`Answer`}
+                              />
+                              <div className="flex justify-center">
+                                <Checkbox
+                                  checked={choice.isCorrect}
+                                  onCheckedChange={(checked) => updateChoice(activeQuestion.id, choice.id, 'isCorrect', checked)}
+                                  className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                                />
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 text-destructive h-8 w-8"
+                                onClick={() => removeChoice(activeQuestion.id, choice.id)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          className="mt-4 text-blue-500 hover:text-blue-600 hover:bg-blue-50 pl-0"
+                          onClick={() => addChoice(activeQuestion.id)}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add choice
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
             </div>
           </div>
         </TabsContent>
