@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, Users, Star, BookOpen, Play, Lock } from 'lucide-react';
+import { Clock, Users, Star, BookOpen, Play, Lock, Sparkles } from 'lucide-react';
 import { Course, Enrollment } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
@@ -36,21 +36,22 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
     if (!enrollment) {
       if (course.accessRule === 'payment' && course.price) {
         return (
-          <Button className="w-full rounded-full" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
+          <Button className="w-full rounded-full font-semibold shadow-lg hover:shadow-xl transition-all" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
             Buy ₹{course.price}
           </Button>
         );
       }
       if (course.accessRule === 'invitation') {
         return (
-          <Button variant="outline" className="w-full" disabled>
+          <Button variant="outline" className="w-full rounded-full" disabled>
             <Lock className="mr-2 h-4 w-4" />
             Invitation Only
           </Button>
         );
       }
       return (
-        <Button className="w-full rounded-full" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
+        <Button className="w-full rounded-full font-semibold shadow-lg hover:shadow-xl transition-all" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
+          <Sparkles className="mr-2 h-4 w-4" />
           Join Course
         </Button>
       );
@@ -58,7 +59,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
 
     if (enrollment.status === 'completed') {
       return (
-        <Button variant="outline" className="w-full" asChild>
+        <Button variant="outline" className="w-full rounded-full" asChild>
           <Link to={`/course/${course.id}`}>
             <Play className="mr-2 h-4 w-4" />
             Review
@@ -69,17 +70,17 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
 
     if (enrollment.status === 'yet_to_start') {
       return (
-        <Button className="w-full" asChild>
+        <Button className="w-full rounded-full font-semibold" asChild>
           <Link to={`/course/${course.id}/learn`}>
             <Play className="mr-2 h-4 w-4" />
-            Start
+            Start Learning
           </Link>
         </Button>
       );
     }
 
     return (
-      <Button className="w-full" asChild>
+      <Button className="w-full rounded-full font-semibold" asChild>
         <Link to={`/course/${course.id}`}>
           <Play className="mr-2 h-4 w-4" />
           Continue
@@ -89,93 +90,135 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30">
+      {/* Ambient Glow on Hover */}
+      <div className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 blur-2xl" />
+      </div>
+
       {/* Clickable Area for Image and Title */}
       <div className="cursor-pointer" onClick={handleCardClick}>
-        {/* Image */}
-        <div className="relative aspect-video overflow-hidden after:absolute after:inset-0 after:bg-gradient-to-t after:from-black/30 after:to-transparent after:opacity-0 group-hover:after:opacity-100 after:transition-opacity">
+        {/* Image with Overlay */}
+        <div className="relative aspect-video overflow-hidden">
+          {/* Image */}
           <img
             src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop'}
             alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
+
+          {/* Dark Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+
+          {/* Rating Badge */}
           {course.status === 'published' && (
-            <div className="absolute left-3 top-3">
-              <Badge variant="secondary" className="bg-card/90 backdrop-blur">
-                <Star className="mr-1 h-3 w-3 fill-warning text-warning" />
-                {course.rating.toFixed(1)}
-              </Badge>
+            <div className="absolute left-3 top-3 z-10">
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-400/30 blur-lg rounded-full" />
+                <Badge className="relative bg-card/95 backdrop-blur-md border-yellow-400/30 shadow-lg">
+                  <Star className="mr-1 h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  <span className="font-bold">{course.rating.toFixed(1)}</span>
+                </Badge>
+              </div>
             </div>
           )}
+
+          {/* Price Badge */}
           {course.accessRule === 'payment' && course.price && (
-            <div className="absolute right-3 top-3">
-              <Badge className="gradient-accent text-accent-foreground">
-                ₹{course.price}
-              </Badge>
+            <div className="absolute right-3 top-3 z-10">
+              <div className="relative">
+                <div className="absolute inset-0 bg-emerald-400/30 blur-lg rounded-full" />
+                <Badge className="relative bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold shadow-lg border-0">
+                  ₹{course.price}
+                </Badge>
+              </div>
             </div>
           )}
+
+          {/* Hover Overlay with Quick Action Hint */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="transform scale-90 group-hover:scale-100 transition-transform duration-300">
+              <div className="rounded-full bg-white/20 backdrop-blur-md p-4 border border-white/30">
+                <Play className="h-8 w-8 text-white drop-shadow-lg" />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Content Preview */}
-        <div className="flex flex-1 flex-col p-5 pb-0">
+        <div className="flex flex-1 flex-col p-5 pb-3">
           {/* Tags */}
-          <div className="mb-2 flex flex-wrap gap-1">
-            {course.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {course.tags.slice(0, 3).map((tag, index) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className={cn(
+                  "text-xs font-medium border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors",
+                  "animate-in fade-in slide-in-from-left-2 duration-300"
+                )}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
                 {tag}
               </Badge>
             ))}
           </div>
 
-          {/* Title & Description */}
-          <h3 className="mb-2 line-clamp-2 text-lg font-semibold leading-snug transition-colors group-hover:text-primary">
+          {/* Title */}
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold leading-tight transition-colors group-hover:text-primary">
             {course.title}
           </h3>
-          <p className="mb-4 line-clamp-2 flex-1 text-sm text-muted-foreground">
+
+          {/* Description */}
+          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
             {course.description}
           </p>
 
           {/* Stats */}
-          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <BookOpen className="h-4 w-4" />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground font-medium">
+            <span className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+              <BookOpen className="h-3.5 w-3.5" />
               {course.totalLessons} lessons
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+            <span className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+              <Clock className="h-3.5 w-3.5" />
               {formatDuration(course.totalDuration)}
             </span>
-            <span className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
+            <span className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+              <Users className="h-3.5 w-3.5" />
               {course.enrolledCount.toLocaleString()}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Content Wrapper for remaining non-clickable actions if needed, though here we just put the button in p-4 */}
-      <div className="flex flex-1 flex-col p-5 pt-0">
+      {/* Bottom Section - Non-clickable */}
+      <div className="flex flex-col p-5 pt-0 mt-auto">
         {/* Progress */}
         {showProgress && enrollment && (
           <div className="mb-4">
-            <div className="mb-1 flex items-center justify-between text-sm">
+            <div className="mb-2 flex items-center justify-between text-xs font-medium">
               <span className="text-muted-foreground">Progress</span>
-              <span className="font-medium">{enrollment.progress}%</span>
+              <span className="text-primary">{enrollment.progress}%</span>
             </div>
-            <Progress value={enrollment.progress} className="h-2 rounded-full" />
+            <Progress value={enrollment.progress} className="h-2 rounded-full bg-secondary" />
           </div>
         )}
 
         {/* Instructor */}
-        <div className="mb-4 flex items-center gap-2 text-sm">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+        <div className="mb-4 flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20 text-xs font-bold text-primary border border-primary/20">
             {course.instructorName.charAt(0)}
           </div>
-          <span className="text-muted-foreground">{course.instructorName}</span>
+          <span className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            {course.instructorName}
+          </span>
         </div>
 
-        {/* Action */}
-        {getActionButton()}
+        {/* Action Button */}
+        <div className="pt-2 border-t border-border/50">
+          {getActionButton()}
+        </div>
       </div>
     </div>
   );
