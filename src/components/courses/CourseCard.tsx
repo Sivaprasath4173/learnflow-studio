@@ -25,7 +25,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
       if (course.accessRule === 'payment' && course.price) {
         return (
           <Button className="w-full" onClick={onAction}>
-            Buy ${course.price}
+            Buy ₹{course.price}
           </Button>
         );
       }
@@ -96,7 +96,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
         {course.accessRule === 'payment' && course.price && (
           <div className="absolute right-3 top-3">
             <Badge className="gradient-accent text-accent-foreground">
-              ${course.price}
+              ₹{course.price}
             </Badge>
           </div>
         )}

@@ -50,7 +50,7 @@ export const mockCourses: Course[] = [
     status: 'published',
     visibility: 'everyone',
     accessRule: 'payment',
-    price: 49.99,
+    price: 3999,
     instructorId: 'inst-3',
     instructorName: 'Emily Rodriguez',
     totalLessons: 32,
