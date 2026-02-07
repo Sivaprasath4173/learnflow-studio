@@ -36,12 +36,12 @@ export default function CoursesPage() {
   });
 
   return (
-    <div className="py-7 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/40 py-10 md:py-14">
       <div className="container">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="mb-2 text-3xl font-bold">Explore Courses</h1>
-          <p className="text-muted-foreground">
+          <h1 className="mb-1 text-4xl font-extrabold tracking-tight">Explore Courses</h1>
+          <p className="text-sm text-muted-foreground">
             Discover {filteredCourses.length} courses to boost your skills
           </p>
         </div>
@@ -55,16 +55,17 @@ export default function CoursesPage() {
               placeholder="Search courses..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-full bg-background shadow-sm focus-visible:ring-2"
             />
           </div>
 
           {/* View Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="rounded-full bg-muted p-1 flex gap-1">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
               size="icon"
               onClick={() => setViewMode('grid')}
+              className="rounded-full transition-all duration-200"
             >
               <Grid className="h-4 w-4" />
             </Button>
@@ -72,6 +73,7 @@ export default function CoursesPage() {
               variant={viewMode === 'list' ? 'default' : 'outline'}
               size="icon"
               onClick={() => setViewMode('list')}
+              className="rounded-full transition-all duration-200"
             >
               <List className="h-4 w-4" />
             </Button>
@@ -84,42 +86,49 @@ export default function CoursesPage() {
             <Badge
               key={tag}
               variant={selectedTag === tag ? 'default' : 'outline'}
-              className="cursor-pointer px-4 py-2 text-sm transition-colors hover:bg-primary/10"
+              className="cursor-pointer rounded-full px-4 py-2 text-sm transition-all duration-200 hover:bg-primary/10 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
               onClick={() => setSelectedTag(tag)}
+              data-active={selectedTag === tag}
             >
               {tag}
             </Badge>
           ))}
         </div>
 
+        {/* Featured hint */}
+        <p className="mb-4 text-xs uppercase tracking-wide text-muted-foreground">
+          Featured & recently added courses
+        </p>
+
         {/* Course Grid */}
         {filteredCourses.length > 0 ? (
           <div className={cn(
-            "grid gap-5",
+            "grid gap-6 animate-in fade-in duration-300",
             viewMode === 'grid'
               ? "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1"
           )}>
             {filteredCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                onAction={() => {
-                  if (isAuthenticated) {
-                    navigate(`/course/${course.id}`);
-                  } else {
-                    navigate(`/login?redirect=/course/${course.id}`);
-                  }
-                }}
-              />
+              <div key={course.id} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <CourseCard
+                  course={course}
+                  onAction={() => {
+                    if (isAuthenticated) {
+                      navigate(`/course/${course.id}`);
+                    } else {
+                      navigate(`/login?redirect=/course/${course.id}`);
+                    }
+                  }}
+                />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in duration-200">
             <div className="mb-4 rounded-full bg-muted p-4">
               <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold">No courses found</h3>
+            <h3 className="mb-2 text-xl font-semibold">No courses found</h3>
             <p className="text-muted-foreground">
               Try adjusting your search or filters
             </p>

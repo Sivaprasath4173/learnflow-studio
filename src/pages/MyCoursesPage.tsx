@@ -12,6 +12,8 @@ export default function MyCoursesPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const tabOrder = ['all', 'yet_to_start', 'in_progress', 'completed'];
+
   // Get user's enrolled courses with enrollment data
   const enrolledCourses = mockEnrollments
     .filter((e) => e.userId === user?.id)
@@ -73,24 +75,29 @@ export default function MyCoursesPage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           {/* Main Content */}
           <div>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => {
+                setActiveTab(value);
+              }}
+            >
               <TabsList className="mb-8 grid w-full grid-cols-4 rounded-xl bg-muted p-1">
-                <TabsTrigger value="all" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
+                <TabsTrigger value="all" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-[1.02] transition-transform transition transition-all duration-200 ease-out hover:bg-background/70">
                   <BookOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">All</span>
                   <span className="text-xs text-muted-foreground">({stats.all})</span>
                 </TabsTrigger>
-                <TabsTrigger value="yet_to_start" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
+                <TabsTrigger value="yet_to_start" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-[1.02] transition-transform transition transition-all duration-200 ease-out hover:bg-background/70">
                   <Clock className="h-4 w-4" />
                   <span className="hidden sm:inline">To Start</span>
                   <span className="text-xs text-muted-foreground">({stats.yet_to_start})</span>
                 </TabsTrigger>
-                <TabsTrigger value="in_progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
+                <TabsTrigger value="in_progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-[1.02] transition-transform transition transition-all duration-200 ease-out hover:bg-background/70">
                   <PlayCircle className="h-4 w-4" />
                   <span className="hidden sm:inline">In Progress</span>
                   <span className="text-xs text-muted-foreground">({stats.in_progress})</span>
                 </TabsTrigger>
-                <TabsTrigger value="completed" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
+                <TabsTrigger value="completed" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:scale-[1.02] transition-transform transition transition-all duration-200 ease-out hover:bg-background/70">
                   <CheckCircle className="h-4 w-4" />
                   <span className="hidden sm:inline">Completed</span>
                   <span className="text-xs text-muted-foreground">({stats.completed})</span>
@@ -101,21 +108,22 @@ export default function MyCoursesPage() {
                 <TabsContent
                   key={tab}
                   value={tab}
-                  className="data-[state=inactive]:hidden"
+                  className="data-[state=inactive]:hidden animate-in fade-in duration-300"
                 >
                   {filterByStatus(tab).length > 0 ? (
-                    <div className="grid gap-6 sm:grid-cols-2 animate-in fade-in slide-in-from-bottom-2 duration-300 will-change-[opacity,transform]">
+                    <div className="grid gap-6 sm:grid-cols-2 will-change-[opacity,transform]">
                       {filterByStatus(tab).map(({ course, enrollment }) => (
-                        <CourseCard
-                          key={course.id}
-                          course={course}
-                          enrollment={enrollment}
-                          showProgress
-                        />
+                        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300" key={course.id}>
+                          <CourseCard
+                            course={course}
+                            enrollment={enrollment}
+                            showProgress
+                          />
+                        </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in slide-in-from-bottom-2 duration-300 will-change-[opacity,transform]">
+                    <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in duration-200">
                       <div className="mb-4 rounded-full bg-background p-5 shadow-sm">
                         <BookOpen className="h-8 w-8 text-muted-foreground" />
                       </div>
