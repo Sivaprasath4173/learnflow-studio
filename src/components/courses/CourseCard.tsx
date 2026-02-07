@@ -58,7 +58,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
     if (enrollment.status === 'yet_to_start') {
       return (
         <Button className="w-full" asChild>
-          <Link to={`/course/${course.id}`}>
+          <Link to={`/course/${course.id}/learn`}>
             <Play className="mr-2 h-4 w-4" />
             Start
           </Link>
@@ -68,7 +68,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
 
     return (
       <Button className="w-full" asChild>
-        <Link to={`/course/${course.id}`}>
+        <Link to={`/course/${course.id}/learn`}>
           <Play className="mr-2 h-4 w-4" />
           Continue
         </Link>

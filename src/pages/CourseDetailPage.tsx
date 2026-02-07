@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { 
-  Play, 
-  Clock, 
-  Users, 
-  Star, 
-  BookOpen, 
-  ChevronRight, 
-  CheckCircle, 
+import {
+  Play,
+  Clock,
+  Users,
+  Star,
+  BookOpen,
+  ChevronRight,
+  CheckCircle,
   Lock,
   FileText,
   Image,
@@ -67,10 +67,10 @@ export default function CourseDetailPage() {
   };
 
   // Calculate completed lessons based on enrollment progress
-  const completedLessonsCount = enrollment 
+  const completedLessonsCount = enrollment
     ? Math.ceil((enrollment.progress / 100) * lessons.length)
     : 0;
-  
+
   const incompleteLessonsCount = lessons.length - completedLessonsCount;
 
   const filteredLessons = lessons.filter((lesson) =>
@@ -78,7 +78,7 @@ export default function CourseDetailPage() {
   );
 
   const handleLessonClick = (lesson: Lesson) => {
-    navigate(`/course/${courseId}/learn`, { 
+    navigate(`/course/${courseId}/learn`, {
       state: { lessonId: lesson.id }
     });
   };
@@ -384,6 +384,7 @@ export default function CourseDetailPage() {
               </div>
             </div>
           </TabsContent>
+          <TabsContent value="reviews">
             <div className="space-y-6">
               {/* Rating Summary */}
               <div className="flex items-center gap-6 rounded-xl border border-border bg-card p-6">
