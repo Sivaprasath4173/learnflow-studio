@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Play, 
   Clock, 
@@ -12,6 +12,7 @@ import {
   FileText,
   Image,
   HelpCircle,
+  Search,
   Download,
   ExternalLink
 } from 'lucide-react';
@@ -37,6 +38,7 @@ const getLessonIcon = (type: LessonType) => {
 
 export default function CourseDetailPage() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const [searchLesson, setSearchLesson] = useState('');
 
@@ -64,11 +66,22 @@ export default function CourseDetailPage() {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  // Calculate completed lessons based on enrollment progress
+  const completedLessonsCount = enrollment 
+    ? Math.ceil((enrollment.progress / 100) * lessons.length)
+    : 0;
+  
+  const incompleteLessonsCount = lessons.length - completedLessonsCount;
+
   const filteredLessons = lessons.filter((lesson) =>
     lesson.title.toLowerCase().includes(searchLesson.toLowerCase())
   );
 
-  const completedLessons = 2; // Mock data - would come from progress tracking
+  const handleLessonClick = (lesson: Lesson) => {
+    navigate(`/course/${courseId}/learn`, { 
+      state: { lessonId: lesson.id }
+    });
+  };
 
   return (
     <div className="py-8">
@@ -182,38 +195,161 @@ export default function CourseDetailPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="content">
+        <Tabs defaultValue="overview">
           <TabsList className="mb-6">
+            <TabsTrigger value="overview">Course Overview</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="content">
-            <div className="rounded-xl border border-border bg-card">
-              {/* Search */}
-              <div className="border-b border-border p-4">
-                <input
-                  type="text"
-                  placeholder="Search lessons..."
-                  value={searchLesson}
-                  onChange={(e) => setSearchLesson(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                />
+          <TabsContent value="overview">
+            <div className="space-y-8">
+              {/* Course Info Section */}
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="aspect-video w-full">
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <h2 className="mb-3 text-2xl font-bold">{course.title}</h2>
+                  <p className="mb-6 text-muted-foreground">{course.description}</p>
+                </div>
               </div>
 
+              {/* Progress Section */}
+              {enrollment && (
+                <div className="rounded-xl border border-border bg-card p-6">
+                  <h3 className="mb-4 font-semibold">Your Progress</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="mb-2 flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Completion</span>
+                        <span className="font-medium">{enrollment.progress}%</span>
+                      </div>
+                      <Progress value={enrollment.progress} className="h-2" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Statistics Section */}
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-xl border border-border bg-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Lessons</p>
+                      <p className="mt-2 text-2xl font-bold">{lessons.length}</p>
+                    </div>
+                    <BookOpen className="h-8 w-8 text-muted-foreground opacity-50" />
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Completed</p>
+                      <p className="mt-2 text-2xl font-bold">{completedLessonsCount}</p>
+                    </div>
+                    <CheckCircle className="h-8 w-8 text-success opacity-50" />
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Remaining</p>
+                      <p className="mt-2 text-2xl font-bold">{incompleteLessonsCount}</p>
+                    </div>
+                    <BookOpen className="h-8 w-8 text-muted-foreground opacity-50" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Lessons List Section */}
+              <div className="rounded-xl border border-border bg-card">
+                {/* Search */}
+                <div className="border-b border-border p-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search lessons..."
+                      value={searchLesson}
+                      onChange={(e) => setSearchLesson(e.target.value)}
+                      className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                </div>
+
+                {/* Lesson List */}
+                <div className="divide-y divide-border">
+                  {filteredLessons.map((lesson, index) => {
+                    const Icon = getLessonIcon(lesson.type);
+                    const isCompleted = index < completedLessonsCount;
+                    const isLocked = !enrollment && !isCompleted;
+
+                    return (
+                      <button
+                        key={lesson.id}
+                        onClick={() => !isLocked && handleLessonClick(lesson)}
+                        disabled={isLocked}
+                        className={cn(
+                          "flex w-full items-center gap-4 p-4 transition-colors text-left",
+                          isLocked ? "opacity-60 cursor-not-allowed" : "hover:bg-muted/50 cursor-pointer"
+                        )}
+                      >
+                        <div className={cn(
+                          "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg",
+                          isCompleted ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
+                        )}>
+                          {isCompleted ? (
+                            <CheckCircle className="h-5 w-5" />
+                          ) : (
+                            <Icon className="h-5 w-5" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={cn(
+                            "font-medium truncate",
+                            isCompleted && "text-muted-foreground"
+                          )}>
+                            {lesson.title}
+                          </p>
+                          <p className="text-sm text-muted-foreground capitalize">
+                            {lesson.type} • {lesson.duration} min
+                          </p>
+                        </div>
+                        {isLocked ? (
+                          <Lock className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="content">
+            <div className="rounded-xl border border-border bg-card">
               {/* Lesson List */}
               <div className="divide-y divide-border">
                 {filteredLessons.map((lesson, index) => {
                   const Icon = getLessonIcon(lesson.type);
-                  const isCompleted = index < completedLessons;
+                  const isCompleted = index < completedLessonsCount;
                   const isLocked = !enrollment && !isCompleted;
 
                   return (
-                    <div
+                    <button
                       key={lesson.id}
+                      onClick={() => !isLocked && handleLessonClick(lesson)}
+                      disabled={isLocked}
                       className={cn(
-                        "flex items-center gap-4 p-4 transition-colors",
-                        isLocked ? "opacity-60" : "hover:bg-muted/50"
+                        "flex w-full items-center gap-4 p-4 transition-colors text-left",
+                        isLocked ? "opacity-60 cursor-not-allowed" : "hover:bg-muted/50 cursor-pointer"
                       )}
                     >
                       <div className={cn(
@@ -238,18 +374,16 @@ export default function CourseDetailPage() {
                         </p>
                       </div>
                       {isLocked ? (
-                        <Lock className="h-4 w-4 text-muted-foreground" />
+                        <Lock className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
             </div>
           </TabsContent>
-
-          <TabsContent value="reviews">
             <div className="space-y-6">
               {/* Rating Summary */}
               <div className="flex items-center gap-6 rounded-xl border border-border bg-card p-6">
