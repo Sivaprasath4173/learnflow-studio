@@ -13,12 +13,12 @@ interface AuthContextType {
 }
 
 const badges: Badge[] = [
-  { id: '1', name: 'Newbie', level: 1, requiredPoints: 0, icon: '🌱', color: 'badge-newbie' },
-  { id: '2', name: 'Explorer', level: 2, requiredPoints: 20, icon: '🔍', color: 'badge-explorer' },
-  { id: '3', name: 'Achiever', level: 3, requiredPoints: 40, icon: '⭐', color: 'badge-achiever' },
-  { id: '4', name: 'Specialist', level: 4, requiredPoints: 60, icon: '🎯', color: 'badge-specialist' },
-  { id: '5', name: 'Expert', level: 5, requiredPoints: 80, icon: '💎', color: 'badge-expert' },
-  { id: '6', name: 'Master', level: 6, requiredPoints: 100, icon: '👑', color: 'badge-master' },
+  { id: '1', name: 'Newbie', level: 1, requiredPoints: 20, icon: '🌱', color: 'badge-newbie' },
+  { id: '2', name: 'Explorer', level: 2, requiredPoints: 40, icon: '🔍', color: 'badge-explorer' },
+  { id: '3', name: 'Achiever', level: 3, requiredPoints: 60, icon: '⭐', color: 'badge-achiever' },
+  { id: '4', name: 'Specialist', level: 4, requiredPoints: 80, icon: '🎯', color: 'badge-specialist' },
+  { id: '5', name: 'Expert', level: 5, requiredPoints: 100, icon: '💎', color: 'badge-expert' },
+  { id: '6', name: 'Master', level: 6, requiredPoints: 120, icon: '👑', color: 'badge-master' },
 ];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
