@@ -12,15 +12,11 @@ import {
   MessageCircle,
   Mail,
   Copy,
-<<<<<<< HEAD
-  MoreHorizontal
-=======
   MoreHorizontal,
   Trash2,
   BookOpen,
   Edit,
   X
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -36,8 +32,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-<<<<<<< HEAD
-=======
 import {
   Select,
   SelectContent,
@@ -45,7 +39,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,

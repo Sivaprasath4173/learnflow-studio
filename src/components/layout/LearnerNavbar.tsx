@@ -27,7 +27,6 @@ export function LearnerNavbar() {
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
 
       <div className="container flex h-16 items-center justify-between">
-<<<<<<< HEAD
         {/* Logo */}
         <Link to={isAuthenticated ? "/my-courses" : "/"} className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
@@ -35,18 +34,6 @@ export function LearnerNavbar() {
           </div>
           <span>LearnSphere</span>
         </Link>
-=======
-        <div className="flex items-center gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <GraduationCap className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span>LearnSphere</span>
-          </Link>
-        </div>
-
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">

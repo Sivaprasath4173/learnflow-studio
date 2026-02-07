@@ -14,11 +14,7 @@ import {
   Search,
   Download,
   ExternalLink,
-<<<<<<< HEAD
   ArrowLeft
-=======
-  ChevronLeft
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -140,17 +136,11 @@ export default function CourseDetailPage() {
       <div className="container">
         {/* Back Button */}
         <div className="mb-6">
-<<<<<<< HEAD
           <Button variant="ghost" className="gap-2 pl-0 hover:bg-transparent hover:text-primary" asChild>
             <Link to="/my-courses">
               <ArrowLeft className="h-4 w-4" />
               Back to My Courses
             </Link>
-=======
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 pl-0 hover:bg-transparent hover:text-primary">
-            <ChevronLeft className="h-4 w-4" />
-            Back
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
           </Button>
         </div>
 
@@ -168,20 +158,9 @@ export default function CourseDetailPage() {
 
             {/* Middle - Course Info */}
             <div className="p-6 flex flex-col justify-between">
-<<<<<<< HEAD
               <div>
                 {/* Course Label */}
                 <Badge className="w-fit mb-2">Course</Badge>
-=======
-              {/* Course Label */}
-              <Badge className="w-fit mb-2">Course</Badge>
-
-              {/* Course Title */}
-              <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
-
-              {/* Short Description */}
-              <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
->>>>>>> dc47164d3d08ff14c2250c235b972a9f21c59b47
 
                 {/* Course Title */}
                 <h1 className="text-2xl font-bold mb-3">{course.title}</h1>
@@ -229,17 +208,11 @@ export default function CourseDetailPage() {
 
               {/* CTA Button */}
               {enrollment && (
-<<<<<<< HEAD
                 <Button className="w-full mt-4" size="sm" asChild>
                   <Link to={`/course/${course.id}/learn`}>
                     <Play className="mr-2 h-4 w-4" />
                     {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
                   </Link>
-=======
-                <Button className="w-full mt-4" size="sm" onClick={() => navigate(`/course/${course.id}/learn`)}>
-                  <Play className="mr-2 h-4 w-4" />
-                  {enrollment.status === 'yet_to_start' ? 'Start Learning' : 'Continue Learning'}
->>>>>>> b950301e050dca41e58c47e5c5f5b4f44ee291fb
                 </Button>
               )}
 
