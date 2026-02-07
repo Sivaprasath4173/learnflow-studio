@@ -189,7 +189,18 @@ export function LightRays({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [raysOrigin, raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
+    }, [
+        raysOrigin,
+        raysColor,
+        lightSpread,
+        rayLength,
+        fadeDistance,
+        saturation,
+        followMouse,
+        mouseInfluence,
+        intensity,
+        mousePos
+    ]);
 
     useEffect(() => {
         if (!followMouse) return;
