@@ -75,11 +75,17 @@ export default {
           expert: "hsl(var(--badge-expert))",
           master: "hsl(var(--badge-master))",
         },
+        surface: {
+          DEFAULT: "hsl(var(--background))",
+          elevated: "hsl(var(--card))",
+          soft: "hsl(var(--muted))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -122,6 +128,10 @@ export default {
           "50%": { transform: "scale(1.2)" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        "hover-lift": {
+          from: { transform: "translateY(0px)" },
+          to: { transform: "translateY(-2px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -134,10 +144,16 @@ export default {
         shimmer: "shimmer 2s infinite",
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "points-pop": "points-pop 0.5s ease-out forwards",
+        "hover-lift": "hover-lift 0.15s ease-out forwards",
+      },
+      boxShadow: {
+        soft: "0 4px 12px rgba(0,0,0,0.06)",
+        card: "0 8px 24px rgba(0,0,0,0.08)",
+        focus: "0 0 0 3px hsl(var(--ring) / 0.3)",
       },
       fontFamily: {
-        sans: ["Roboto", "system-ui", "sans-serif"],
-        display: ["Roboto", "system-ui", "sans-serif"],
+        sans: ["Roboto", "Inter", "system-ui", "sans-serif"],
+        display: ["Roboto", "Inter", "system-ui", "sans-serif"],
       },
     },
   },

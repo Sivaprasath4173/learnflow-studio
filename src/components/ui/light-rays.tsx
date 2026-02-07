@@ -189,7 +189,11 @@ export function LightRays({
                 cancelAnimationFrame(animationRef.current);
             }
         };
+<<<<<<< Updated upstream
     }, [raysOrigin, raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
+=======
+    }, [raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
+>>>>>>> Stashed changes
 
     useEffect(() => {
         if (!followMouse) return;
