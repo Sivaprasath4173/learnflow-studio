@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { 
   Play, 
   FileText, 
@@ -35,6 +35,7 @@ const getLessonIcon = (type: LessonType) => {
 
 export default function LessonPlayerPage() {
   const { courseId } = useParams();
+  const location = useLocation();
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -45,6 +46,18 @@ export default function LessonPlayerPage() {
   const enrollment = mockEnrollments.find(
     (e) => e.courseId === courseId && e.userId === user?.id
   );
+
+  // Handle navigation to specific lesson from CourseDetailPage
+  useEffect(() => {
+    const lessonId = (location.state as any)?.lessonId;
+    if (lessonId && lessons.length > 0) {
+      const index = lessons.findIndex((l) => l.id === lessonId);
+      if (index !== -1) {
+        setCurrentLessonIndex(index);
+      }
+    }
+  }, [lessons]);
+
   const currentLesson = lessons[currentLessonIndex];
 
   if (!course || !currentLesson) {

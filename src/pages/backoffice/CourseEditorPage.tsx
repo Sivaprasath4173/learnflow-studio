@@ -14,8 +14,10 @@ import {
   Play,
   FileText,
   Image,
-  HelpCircle
+  HelpCircle,
+  Share2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,6 +53,8 @@ export default function CourseEditorPage() {
   const { courseId } = useParams();
   const course = mockCourses.find((c) => c.id === courseId);
   const lessons = mockLessons.filter((l) => l.courseId === courseId);
+  // @ts-ignore - Mock data typing shortcut
+  const [lessonsList, setLessonsList] = useState<any[]>(lessons);
 
   const [isPublished, setIsPublished] = useState(course?.status === 'published');
   const [title, setTitle] = useState(course?.title || '');
@@ -60,12 +64,58 @@ export default function CourseEditorPage() {
   const [price, setPrice] = useState(course?.price?.toString() || '');
   const [website, setWebsite] = useState(course?.website || '');
   const [responsibleId, setResponsibleId] = useState(course?.instructorId || '');
+  const [courseImage, setCourseImage] = useState(course?.image || '');
   const [addAttendeeOpen, setAddAttendeeOpen] = useState(false);
   const [contactAttendeeOpen, setContactAttendeeOpen] = useState(false);
-
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState('');
   const [newLessonType, setNewLessonType] = useState<LessonType>('video');
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCourseImage(reader.result as string);
+        toast.success('Course image updated successfully');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleContactAttendee = () => {
+    // Mock implementation
+    setContactAttendeeOpen(false);
+    toast.success('Message sent to attendees successfully');
+  };
+
+  const handleAddLesson = () => {
+    const newLesson = {
+      id: `new-lesson-${Date.now()}`,
+      courseId: courseId!,
+      title: newLessonTitle,
+      description: '',
+      type: newLessonType,
+      order: lessonsList.length + 1,
+      duration: 10,
+      content: {},
+      attachments: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    setLessonsList([...lessonsList, newLesson]);
+    setLessonDialogOpen(false);
+    setNewLessonTitle('');
+    setNewLessonType('video');
+    toast.success('Lesson added successfully');
+  };
+
+  const handleAddAttendee = () => {
+    // Mock implementation
+    setAddAttendeeOpen(false);
+    toast.success('Attendee added successfully');
+  };
 
   if (!course) {
     return (
@@ -114,7 +164,7 @@ export default function CourseEditorPage() {
             <Mail className="mr-2 h-4 w-4" />
             Contact
           </Button>
-          <Button>
+          <Button onClick={() => toast.success('Course changes saved')}>
             <Save className="mr-2 h-4 w-4" />
             Save Changes
           </Button>
@@ -123,12 +173,18 @@ export default function CourseEditorPage() {
 
       {/* Course Image */}
       <div className="flex items-start gap-6">
-        <div className="relative h-40 w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30">
-          {course.image ? (
+        <div className="relative h-40 w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 group">
+          <input
+            type="file"
+            accept="image/*"
+            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
+            onChange={handleImageUpload}
+          />
+          {courseImage ? (
             <img
-              src={course.image}
-              alt={course.title}
-              className="h-full w-full object-cover"
+              src={courseImage}
+              alt={title || 'Course Image'}
+              className="h-full w-full object-cover transition-opacity group-hover:opacity-80"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
@@ -138,7 +194,7 @@ export default function CourseEditorPage() {
           <Button
             size="sm"
             variant="secondary"
-            className="absolute bottom-2 right-2"
+            className="absolute bottom-2 right-2 z-10 pointers-events-none"
           >
             Change Image
           </Button>
@@ -211,7 +267,7 @@ export default function CourseEditorPage() {
         {/* Content Tab */}
         <TabsContent value="content" className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Lessons ({lessons.length})</h3>
+            <h3 className="text-lg font-semibold">Lessons ({lessonsList.length})</h3>
             <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -261,7 +317,7 @@ export default function CourseEditorPage() {
                     <Button variant="outline" onClick={() => setLessonDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button disabled={!newLessonTitle.trim()}>
+                    <Button disabled={!newLessonTitle.trim()} onClick={handleAddLesson}>
                       Add Lesson
                     </Button>
                   </div>
@@ -271,9 +327,9 @@ export default function CourseEditorPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card">
-            {lessons.length > 0 ? (
+            {lessonsList.length > 0 ? (
               <div className="divide-y divide-border">
-                {lessons.map((lesson) => {
+                {lessonsList.map((lesson) => {
                   const Icon = getLessonIcon(lesson.type);
                   return (
                     <div
@@ -439,7 +495,7 @@ export default function CourseEditorPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddAttendeeOpen(false)}>Cancel</Button>
-            <Button onClick={() => setAddAttendeeOpen(false)}>Add Learner</Button>
+            <Button onClick={handleAddAttendee}>Add Learner</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -465,7 +521,7 @@ export default function CourseEditorPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setContactAttendeeOpen(false)}>Cancel</Button>
-            <Button onClick={() => setContactAttendeeOpen(false)}>Send Message</Button>
+            <Button onClick={handleContactAttendee}>Send Message</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

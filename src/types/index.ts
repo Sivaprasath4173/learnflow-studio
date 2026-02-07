@@ -34,6 +34,7 @@ export interface Course {
   status: CourseStatus;
   visibility: CourseVisibility;
   accessRule: CourseAccessRule;
+  website?: string;
   price?: number;
   instructorId: string;
   instructorName: string;
