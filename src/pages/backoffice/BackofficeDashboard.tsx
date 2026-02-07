@@ -1,12 +1,11 @@
-import { 
-  BookOpen, 
-  Users, 
-  TrendingUp, 
+import {
+  BookOpen,
+  Users,
+  TrendingUp,
   Award,
   ArrowUpRight,
   ArrowDownRight,
-  MoreHorizontal,
-  Plus
+  MoreHorizontal
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,19 +51,11 @@ export default function BackofficeDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Overview of your courses and learners
-          </p>
-        </div>
-        <Button asChild>
-          <Link to="/backoffice/courses/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Course
-          </Link>
-        </Button>
+      <div>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Overview of your courses and learners
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -183,12 +174,7 @@ export default function BackofficeDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
-              <Link to="/backoffice/courses/new">
-                <Plus className="h-6 w-6" />
-                <span>Create Course</span>
-              </Link>
-            </Button>
+
             <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
               <Link to="/backoffice/learners">
                 <Users className="h-6 w-6" />
