@@ -236,7 +236,11 @@ export default function CourseDetailPage() {
               </div>
 
               {/* CTA Button */}
+<<<<<<< HEAD
               {hasAccess && (
+=======
+              {enrollment && (
+>>>>>>> 88d8ff07062df7884bfb954e511032d4a46d87df
                 <Button className="w-full mt-4" size="sm" asChild>
                   <Link to={`/course/${course.id}/learn`}>
                     <Play className="mr-2 h-4 w-4" />

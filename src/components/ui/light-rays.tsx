@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useRef, useEffect } from 'react';
 
 interface LightRaysProps {
@@ -5,11 +6,21 @@ interface LightRaysProps {
     raysColor?: string;
     lightSpread?: number;
     rayLength?: number;
+=======
+import { useRef, useEffect, useState } from 'react';
+
+interface LightRaysProps {
+    raysColor?: string;
+    lightSpread?: number;
+    rayLength?: number;
+    fadeDistance?: number;
+>>>>>>> 88d8ff07062df7884bfb954e511032d4a46d87df
     saturation?: number;
     followMouse?: boolean;
     mouseInfluence?: number;
     intensity?: number;
     blur?: number;
+<<<<<<< HEAD
 }
 
 export function LightRays({
@@ -18,6 +29,28 @@ export function LightRays({
     intensity = 1,
 }: LightRaysProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+=======
+    className?: string;
+}
+
+export function LightRays({
+    raysColor = '#7c3aed',
+    lightSpread = 0.6,
+    rayLength = 0.8,
+    fadeDistance = 1,
+    saturation = 0.3,
+    followMouse = true,
+    mouseInfluence = 0.05,
+    intensity = 0.35,
+    blur = 60,
+    className = '',
+}: LightRaysProps) {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.3 });
+    const animationRef = useRef<number>();
+    const smoothMouseRef = useRef({ x: 0.5, y: 0.3 });
+>>>>>>> 88d8ff07062df7884bfb954e511032d4a46d87df
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -26,6 +59,7 @@ export function LightRays({
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+<<<<<<< HEAD
         let animationFrameId: number;
         let time = 0;
 
@@ -88,5 +122,181 @@ export function LightRays({
             className="absolute inset-0 pointer-events-none opacity-50"
             style={{ mixBlendMode: 'screen' }}
         />
+=======
+        const resizeCanvas = () => {
+            const dpr = Math.min(window.devicePixelRatio, 1.5);
+            canvas.width = canvas.offsetWidth * dpr;
+            canvas.height = canvas.offsetHeight * dpr;
+            ctx.scale(dpr, dpr);
+        };
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Parse color to RGB
+        const hexToRgb = (hex: string) => {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 124, g: 58, b: 237 };
+        };
+
+        const rgb = hexToRgb(raysColor);
+
+        const render = () => {
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+
+            // Very smooth mouse easing
+            smoothMouseRef.current.x += (mousePos.x - smoothMouseRef.current.x) * 0.015;
+            smoothMouseRef.current.y += (mousePos.y - smoothMouseRef.current.y) * 0.015;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Calculate mouse-influenced center (very subtle)
+            const mouseOffsetX = followMouse ? (smoothMouseRef.current.x - 0.5) * width * mouseInfluence : 0;
+            const centerX = width / 2 + mouseOffsetX;
+            const originY = -height * 0.1;
+
+            const baseAlpha = intensity * saturation * fadeDistance;
+            const spotlightWidth = width * lightSpread;
+            const spotlightHeight = height * rayLength;
+
+            // Layer 1: Wide ambient glow (very soft)
+            const ambientGlow = ctx.createRadialGradient(
+                centerX, originY,
+                0,
+                centerX, height * 0.5,
+                width * 0.8
+            );
+
+            ambientGlow.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.4})`);
+            ambientGlow.addColorStop(0.2, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.2})`);
+            ambientGlow.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.05})`);
+            ambientGlow.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = ambientGlow;
+            ctx.fillRect(0, 0, width, height);
+
+            // Layer 2: Main spotlight cone (soft edges)
+            ctx.save();
+
+            // Create soft cone path
+            ctx.beginPath();
+            const topWidth = spotlightWidth * 0.15;
+            const bottomWidth = spotlightWidth * 1.2;
+
+            ctx.moveTo(centerX - topWidth, 0);
+            ctx.lineTo(centerX + topWidth, 0);
+
+            // Smooth bezier curves for organic, soft edges
+            ctx.bezierCurveTo(
+                centerX + topWidth * 2, spotlightHeight * 0.25,
+                centerX + bottomWidth * 0.7, spotlightHeight * 0.6,
+                centerX + bottomWidth, spotlightHeight * 1.2
+            );
+            ctx.lineTo(centerX - bottomWidth, spotlightHeight * 1.2);
+            ctx.bezierCurveTo(
+                centerX - bottomWidth * 0.7, spotlightHeight * 0.6,
+                centerX - topWidth * 2, spotlightHeight * 0.25,
+                centerX - topWidth, 0
+            );
+            ctx.closePath();
+            ctx.clip();
+
+            // Multi-stop gradient for smooth fade
+            const coneGradient = ctx.createLinearGradient(centerX, 0, centerX, spotlightHeight);
+
+            coneGradient.addColorStop(0, `rgba(${Math.min(255, rgb.r + 80)}, ${Math.min(255, rgb.g + 80)}, ${Math.min(255, rgb.b + 80)}, ${baseAlpha * 0.6})`);
+            coneGradient.addColorStop(0.1, `rgba(${Math.min(255, rgb.r + 40)}, ${Math.min(255, rgb.g + 40)}, ${Math.min(255, rgb.b + 40)}, ${baseAlpha * 0.4})`);
+            coneGradient.addColorStop(0.25, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.25})`);
+            coneGradient.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.12})`);
+            coneGradient.addColorStop(0.75, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.04})`);
+            coneGradient.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = coneGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.restore();
+
+            // Layer 3: Center highlight (subtle bright point)
+            const centerHighlight = ctx.createRadialGradient(
+                centerX, 0,
+                0,
+                centerX, 0,
+                spotlightWidth * 0.4
+            );
+
+            centerHighlight.addColorStop(0, `rgba(255, 250, 255, ${baseAlpha * 0.35})`);
+            centerHighlight.addColorStop(0.15, `rgba(${Math.min(255, rgb.r + 100)}, ${Math.min(255, rgb.g + 100)}, ${Math.min(255, rgb.b + 100)}, ${baseAlpha * 0.2})`);
+            centerHighlight.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.08})`);
+            centerHighlight.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = centerHighlight;
+            ctx.fillRect(0, 0, width, height);
+
+            // Layer 4: Soft bloom effect (very subtle)
+            const bloom = ctx.createRadialGradient(
+                centerX, height * 0.2,
+                0,
+                centerX, height * 0.3,
+                spotlightWidth * 0.6
+            );
+
+            bloom.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.15})`);
+            bloom.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${baseAlpha * 0.05})`);
+            bloom.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = bloom;
+            ctx.fillRect(0, 0, width, height);
+
+            animationRef.current = requestAnimationFrame(render);
+        };
+
+        render();
+
+        return () => {
+            window.removeEventListener('resize', resizeCanvas);
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+            }
+        };
+    }, [raysColor, lightSpread, rayLength, fadeDistance, saturation, followMouse, mouseInfluence, intensity, mousePos]);
+
+    useEffect(() => {
+        if (!followMouse) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({
+                x: e.clientX / window.innerWidth,
+                y: e.clientY / window.innerHeight
+            });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, [followMouse]);
+
+    return (
+        <div
+            ref={containerRef}
+            className={`absolute inset-0 pointer-events-none ${className}`}
+            style={{
+                filter: `blur(${blur}px)`,
+                transform: 'translateZ(0)',
+            }}
+        >
+            <canvas
+                ref={canvasRef}
+                className="w-full h-full"
+                style={{
+                    mixBlendMode: 'screen',
+                    opacity: 0.9,
+                }}
+            />
+        </div>
+>>>>>>> 88d8ff07062df7884bfb954e511032d4a46d87df
     );
 }
