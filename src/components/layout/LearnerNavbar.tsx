@@ -18,10 +18,7 @@ export function LearnerNavbar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [
-    { href: '/courses', label: 'Courses', icon: BookOpen },
-    ...(isAuthenticated ? [{ href: '/my-courses', label: 'My Courses', icon: GraduationCap }] : []),
-  ];
+  const navLinks: { href: string; label: string; icon: any }[] = [];
 
   const isActive = (path: string) => location.pathname === path;
 

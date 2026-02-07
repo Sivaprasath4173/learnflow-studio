@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Clock, Users, Star, BookOpen, Play, Lock } from 'lucide-react';
 import { Course, Enrollment } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -14,17 +15,28 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, enrollment, showProgress = false, onAction }: CourseCardProps) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  const handleCardClick = () => {
+    if (isAuthenticated) {
+      navigate(`/course/${course.id}`);
+    } else {
+      navigate('/login');
+    }
+  };
+
   const getActionButton = () => {
     if (!enrollment) {
       if (course.accessRule === 'payment' && course.price) {
         return (
-          <Button className="w-full" onClick={onAction}>
+          <Button className="w-full" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
             Buy ₹{course.price}
           </Button>
         );
@@ -38,7 +50,7 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
         );
       }
       return (
-        <Button className="w-full" onClick={onAction}>
+        <Button className="w-full" onClick={isAuthenticated ? onAction : () => navigate('/login')}>
           Join Course
         </Button>
       );
@@ -78,65 +90,71 @@ export function CourseCard({ course, enrollment, showProgress = false, onAction 
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all duration-300 hover:shadow-card-hover">
-      {/* Image */}
-      <div className="relative aspect-video overflow-hidden">
-        <img
-          src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop'}
-          alt={course.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        {course.status === 'published' && (
-          <div className="absolute left-3 top-3">
-            <Badge variant="secondary" className="bg-card/90 backdrop-blur">
-              <Star className="mr-1 h-3 w-3 fill-warning text-warning" />
-              {course.rating.toFixed(1)}
-            </Badge>
+      {/* Clickable Area for Image and Title */}
+      <div className="cursor-pointer" onClick={handleCardClick}>
+        {/* Image */}
+        <div className="relative aspect-video overflow-hidden">
+          <img
+            src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop'}
+            alt={course.title}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          {course.status === 'published' && (
+            <div className="absolute left-3 top-3">
+              <Badge variant="secondary" className="bg-card/90 backdrop-blur">
+                <Star className="mr-1 h-3 w-3 fill-warning text-warning" />
+                {course.rating.toFixed(1)}
+              </Badge>
+            </div>
+          )}
+          {course.accessRule === 'payment' && course.price && (
+            <div className="absolute right-3 top-3">
+              <Badge className="gradient-accent text-accent-foreground">
+                ₹{course.price}
+              </Badge>
+            </div>
+          )}
+        </div>
+
+        {/* Content Preview */}
+        <div className="flex flex-1 flex-col p-4 pb-0">
+          {/* Tags */}
+          <div className="mb-2 flex flex-wrap gap-1">
+            {course.tags.slice(0, 3).map((tag) => (
+              <Badge key={tag} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
           </div>
-        )}
-        {course.accessRule === 'payment' && course.price && (
-          <div className="absolute right-3 top-3">
-            <Badge className="gradient-accent text-accent-foreground">
-              ₹{course.price}
-            </Badge>
+
+          {/* Title & Description */}
+          <h3 className="mb-2 line-clamp-2 text-lg font-semibold leading-tight">
+            {course.title}
+          </h3>
+          <p className="mb-4 line-clamp-2 flex-1 text-sm text-muted-foreground">
+            {course.description}
+          </p>
+
+          {/* Stats */}
+          <div className="mb-4 flex items-center gap-4 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <BookOpen className="h-4 w-4" />
+              {course.totalLessons} lessons
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {formatDuration(course.totalDuration)}
+            </span>
+            <span className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              {course.enrolledCount.toLocaleString()}
+            </span>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
-        {/* Tags */}
-        <div className="mb-2 flex flex-wrap gap-1">
-          {course.tags.slice(0, 3).map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Title & Description */}
-        <h3 className="mb-2 line-clamp-2 text-lg font-semibold leading-tight">
-          {course.title}
-        </h3>
-        <p className="mb-4 line-clamp-2 flex-1 text-sm text-muted-foreground">
-          {course.description}
-        </p>
-
-        {/* Stats */}
-        <div className="mb-4 flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
-            {course.totalLessons} lessons
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            {formatDuration(course.totalDuration)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
-            {course.enrolledCount.toLocaleString()}
-          </span>
-        </div>
-
+      {/* Content Wrapper for remaining non-clickable actions if needed, though here we just put the button in p-4 */}
+      <div className="flex flex-1 flex-col p-4 pt-0">
         {/* Progress */}
         {showProgress && enrollment && (
           <div className="mb-4">
