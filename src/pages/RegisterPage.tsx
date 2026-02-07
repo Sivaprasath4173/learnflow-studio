@@ -1,10 +1,9 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Mail, Lock, Eye, EyeOff, User, Home } from 'lucide-react';
+import { GraduationCap, Mail, Lock, User, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ModernInput } from '@/components/ui/modern-input';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -16,7 +15,6 @@ export default function RegisterPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -93,58 +91,42 @@ export default function RegisterPage() {
                     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                         <div className="space-y-4">
                             <div>
-                                <Label htmlFor="name">Full Name</Label>
-                                <div className="relative mt-1">
-                                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        id="name"
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder="John Doe"
-                                        className="pl-10"
-                                        required
-                                    />
-                                </div>
+                                <ModernInput
+                                    id="name"
+                                    type="text"
+                                    label="Full Name"
+                                    icon={User}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full"
+                                    required
+                                />
                             </div>
 
                             <div>
-                                <Label htmlFor="email">Email address</Label>
-                                <div className="relative mt-1">
-                                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="you@example.com"
-                                        className="pl-10"
-                                        required
-                                    />
-                                </div>
+                                <ModernInput
+                                    id="email"
+                                    type="email"
+                                    label="Email address"
+                                    icon={Mail}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full"
+                                    required
+                                />
                             </div>
 
                             <div>
-                                <Label htmlFor="password">Password</Label>
-                                <div className="relative mt-1">
-                                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        id="password"
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="••••••••"
-                                        className="pl-10 pr-10"
-                                        required
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                    >
-                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                    </button>
-                                </div>
+                                <ModernInput
+                                    id="password"
+                                    type="password"
+                                    label="Password"
+                                    icon={Lock}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full"
+                                    required
+                                />
                             </div>
                         </div>
 
