@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 // Layouts
 import { LearnerLayout } from "@/components/layout/LearnerLayout";
@@ -18,12 +19,14 @@ import LessonPlayerPage from "@/pages/LessonPlayerPage";
 import QuizPage from "@/pages/QuizPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/NotFound";
+import LearnerSettingsPage from "@/pages/SettingsPage";
 
 // Backoffice Pages
 import BackofficeDashboard from "@/pages/backoffice/BackofficeDashboard";
 import BackofficeCoursesPage from "@/pages/backoffice/BackofficeCoursesPage";
 import CourseEditorPage from "@/pages/backoffice/CourseEditorPage";
 import BackofficeReportsPage from "@/pages/backoffice/BackofficeReportsPage";
+import BackofficeSettingsPage from "@/pages/backoffice/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +76,14 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <LearnerSettingsPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Full-screen lesson player (outside layout) */}
@@ -107,7 +118,7 @@ function AppRoutes() {
         <Route path="courses/:courseId" element={<CourseEditorPage />} />
         <Route path="learners" element={<div className="p-8">Learners Management (Coming Soon)</div>} />
         <Route path="reports" element={<BackofficeReportsPage />} />
-        <Route path="settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
+        <Route path="settings" element={<BackofficeSettingsPage />} />
       </Route>
 
       {/* 404 */}
@@ -119,13 +130,15 @@ function AppRoutes() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="system" storageKey="learnflow-theme">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
