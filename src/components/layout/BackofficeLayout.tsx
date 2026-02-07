@@ -1,14 +1,15 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { 
-  GraduationCap, 
-  LayoutDashboard, 
-  BookOpen, 
-  Users, 
-  BarChart3, 
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import {
+  GraduationCap,
+  LayoutDashboard,
+  BookOpen,
+  Users,
+  BarChart3,
   Settings,
   ChevronLeft,
   LogOut,
-  Menu
+  Menu,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,6 +27,7 @@ const sidebarLinks = [
 export function BackofficeLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -161,6 +163,9 @@ export function BackofficeLayout() {
             onClick={() => setMobileOpen(true)}
           >
             <Menu className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} title="Go Back">
+            <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1" />
           <span className="text-sm text-muted-foreground">

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Plus, 
-  Search, 
-  Grid, 
-  List, 
+import {
+  Plus,
+  Search,
+  Grid,
+  List,
   MoreHorizontal,
   Edit,
   Share2,
@@ -14,6 +14,7 @@ import {
   Clock,
   Users
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +42,9 @@ export default function BackofficeCoursesPage() {
   const [newCourseDialogOpen, setNewCourseDialogOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
 
-  const filteredCourses = mockCourses.filter((course) =>
+  const [courses, setCourses] = useState<any[]>(mockCourses);
+
+  const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -52,11 +55,42 @@ export default function BackofficeCoursesPage() {
   };
 
   const handleCreateCourse = () => {
-    console.log('Creating course:', newCourseName);
+    const newCourse = {
+      id: `new-course-${Date.now()}`,
+      title: newCourseName,
+      description: 'New course description',
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop', // Default placeholder
+      tags: ['New'],
+      status: 'draft' as const,
+      visibility: 'everyone' as const,
+      accessRule: 'open' as const,
+      instructorId: 'curr-user', // In real app, this would be current user's ID
+      instructorName: 'Current User',
+      totalLessons: 0,
+      totalDuration: 0,
+      viewsCount: 0,
+      enrolledCount: 0,
+      rating: 0,
+      reviewsCount: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setCourses([newCourse, ...courses]);
     setNewCourseDialogOpen(false);
     setNewCourseName('');
+    toast.success('Course created successfully');
   };
 
+  const handleShare = (courseId: string) => {
+    navigator.clipboard.writeText(`${window.location.origin}/course/${courseId}`);
+    toast.success('Course link copied to clipboard');
+  };
+
+  const handleDelete = (courseId: string) => {
+    setCourses(courses.filter((course) => course.id !== courseId));
+    toast.success('Course deleted successfully');
+  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -191,18 +225,21 @@ export default function BackofficeCoursesPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleShare(course.id)} className="cursor-pointer">
                         <Share2 className="mr-2 h-4 w-4" />
                         Share
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem asChild className="cursor-pointer">
                         <Link to={`/course/${course.id}`}>
                           <Eye className="mr-2 h-4 w-4" />
                           Preview
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(course.id)}
+                        className="text-destructive cursor-pointer"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>
@@ -268,18 +305,21 @@ export default function BackofficeCoursesPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleShare(course.id)} className="cursor-pointer">
                         <Share2 className="mr-2 h-4 w-4" />
                         Share
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem asChild className="cursor-pointer">
                         <Link to={`/course/${course.id}`}>
                           <Eye className="mr-2 h-4 w-4" />
                           Preview
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(course.id)}
+                        className="text-destructive cursor-pointer"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>

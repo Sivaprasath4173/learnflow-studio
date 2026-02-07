@@ -18,6 +18,7 @@ import CourseDetailPage from "@/pages/CourseDetailPage";
 import LessonPlayerPage from "@/pages/LessonPlayerPage";
 import QuizPage from "@/pages/QuizPage";
 import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 import NotFound from "@/pages/NotFound";
 import LearnerSettingsPage from "@/pages/SettingsPage";
 
@@ -61,7 +62,7 @@ function AppRoutes() {
     <Routes>
       {/* Auth Routes */}
       <Route path="/login" element={<AuthRoute><LoginPage /></AuthRoute>} />
-      <Route path="/register" element={<AuthRoute><LoginPage /></AuthRoute>} />
+      <Route path="/register" element={<AuthRoute><RegisterPage /></AuthRoute>} />
 
       {/* Learner Routes */}
       <Route element={<LearnerLayout />}>

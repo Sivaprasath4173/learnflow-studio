@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
-  ChevronLeft, 
-  Save, 
-  Eye, 
+import {
+  ChevronLeft,
+  Save,
+  Eye,
   Users,
   Mail,
   Upload,
@@ -14,8 +14,10 @@ import {
   Play,
   FileText,
   Image,
-  HelpCircle
+  HelpCircle,
+  Share2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +29,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -49,6 +53,8 @@ export default function CourseEditorPage() {
   const { courseId } = useParams();
   const course = mockCourses.find((c) => c.id === courseId);
   const lessons = mockLessons.filter((l) => l.courseId === courseId);
+  // @ts-ignore - Mock data typing shortcut
+  const [lessonsList, setLessonsList] = useState<any[]>(lessons);
 
   const [isPublished, setIsPublished] = useState(course?.status === 'published');
   const [title, setTitle] = useState(course?.title || '');
@@ -56,9 +62,60 @@ export default function CourseEditorPage() {
   const [visibility, setVisibility] = useState<string>(course?.visibility || 'everyone');
   const [accessRule, setAccessRule] = useState<string>(course?.accessRule || 'open');
   const [price, setPrice] = useState(course?.price?.toString() || '');
+  const [website, setWebsite] = useState(course?.website || '');
+  const [responsibleId, setResponsibleId] = useState(course?.instructorId || '');
+  const [courseImage, setCourseImage] = useState(course?.image || '');
+  const [addAttendeeOpen, setAddAttendeeOpen] = useState(false);
+  const [contactAttendeeOpen, setContactAttendeeOpen] = useState(false);
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState('');
   const [newLessonType, setNewLessonType] = useState<LessonType>('video');
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCourseImage(reader.result as string);
+        toast.success('Course image updated successfully');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleContactAttendee = () => {
+    // Mock implementation
+    setContactAttendeeOpen(false);
+    toast.success('Message sent to attendees successfully');
+  };
+
+  const handleAddLesson = () => {
+    const newLesson = {
+      id: `new-lesson-${Date.now()}`,
+      courseId: courseId!,
+      title: newLessonTitle,
+      description: '',
+      type: newLessonType,
+      order: lessonsList.length + 1,
+      duration: 10,
+      content: {},
+      attachments: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    setLessonsList([...lessonsList, newLesson]);
+    setLessonDialogOpen(false);
+    setNewLessonTitle('');
+    setNewLessonType('video');
+    toast.success('Lesson added successfully');
+  };
+
+  const handleAddAttendee = () => {
+    // Mock implementation
+    setAddAttendeeOpen(false);
+    toast.success('Attendee added successfully');
+  };
 
   if (!course) {
     return (
@@ -99,15 +156,15 @@ export default function CourseEditorPage() {
               Preview
             </Link>
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setAddAttendeeOpen(true)}>
             <Users className="mr-2 h-4 w-4" />
             Add Attendees
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setContactAttendeeOpen(true)}>
             <Mail className="mr-2 h-4 w-4" />
             Contact
           </Button>
-          <Button>
+          <Button onClick={() => toast.success('Course changes saved')}>
             <Save className="mr-2 h-4 w-4" />
             Save Changes
           </Button>
@@ -116,12 +173,18 @@ export default function CourseEditorPage() {
 
       {/* Course Image */}
       <div className="flex items-start gap-6">
-        <div className="relative h-40 w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30">
-          {course.image ? (
+        <div className="relative h-40 w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 group">
+          <input
+            type="file"
+            accept="image/*"
+            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
+            onChange={handleImageUpload}
+          />
+          {courseImage ? (
             <img
-              src={course.image}
-              alt={course.title}
-              className="h-full w-full object-cover"
+              src={courseImage}
+              alt={title || 'Course Image'}
+              className="h-full w-full object-cover transition-opacity group-hover:opacity-80"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
@@ -131,14 +194,14 @@ export default function CourseEditorPage() {
           <Button
             size="sm"
             variant="secondary"
-            className="absolute bottom-2 right-2"
+            className="absolute bottom-2 right-2 z-10 pointers-events-none"
           >
             Change Image
           </Button>
         </div>
         <div className="flex-1 space-y-4">
           <div>
-            <Label htmlFor="title">Course Title</Label>
+            <Label htmlFor="title">Course Title <span className="text-destructive">*</span></Label>
             <Input
               id="title"
               value={title}
@@ -147,6 +210,33 @@ export default function CourseEditorPage() {
               className="mt-1"
             />
           </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <Label htmlFor="website">Website {isPublished && <span className="text-destructive">*</span>}</Label>
+              <Input
+                id="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://example.com"
+                className={cn("mt-1", isPublished && !website && "border-destructive")}
+              />
+            </div>
+            <div>
+              <Label>Responsible</Label>
+              <Select value={responsibleId} onValueChange={setResponsibleId}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select course admin..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="inst-1">Sarah Johnson</SelectItem>
+                  <SelectItem value="inst-2">Michael Chen</SelectItem>
+                  <SelectItem value="inst-3">Emily Rodriguez</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div>
             <Label htmlFor="tags">Tags</Label>
             <div className="mt-1 flex flex-wrap gap-2">
@@ -177,7 +267,7 @@ export default function CourseEditorPage() {
         {/* Content Tab */}
         <TabsContent value="content" className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Lessons ({lessons.length})</h3>
+            <h3 className="text-lg font-semibold">Lessons ({lessonsList.length})</h3>
             <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -227,7 +317,7 @@ export default function CourseEditorPage() {
                     <Button variant="outline" onClick={() => setLessonDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button disabled={!newLessonTitle.trim()}>
+                    <Button disabled={!newLessonTitle.trim()} onClick={handleAddLesson}>
                       Add Lesson
                     </Button>
                   </div>
@@ -237,9 +327,9 @@ export default function CourseEditorPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card">
-            {lessons.length > 0 ? (
+            {lessonsList.length > 0 ? (
               <div className="divide-y divide-border">
-                {lessons.map((lesson) => {
+                {lessonsList.map((lesson) => {
                   const Icon = getLessonIcon(lesson.type);
                   return (
                     <div
@@ -352,19 +442,7 @@ export default function CourseEditorPage() {
                 </div>
               )}
 
-              <div>
-                <Label>Course Admin</Label>
-                <Select defaultValue={course.instructorId}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Select admin..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="inst-1">Sarah Johnson</SelectItem>
-                    <SelectItem value="inst-2">Michael Chen</SelectItem>
-                    <SelectItem value="inst-3">Emily Rodriguez</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
             </div>
           </div>
         </TabsContent>
@@ -401,6 +479,52 @@ export default function CourseEditorPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Add Attendee Wizard */}
+      <Dialog open={addAttendeeOpen} onOpenChange={setAddAttendeeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Attendee</DialogTitle>
+            <DialogDescription>
+              Add a new learner to this course directly by email.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="learner-email">Learner Email</Label>
+            <Input id="learner-email" placeholder="learner@example.com" className="mt-2" />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddAttendeeOpen(false)}>Cancel</Button>
+            <Button onClick={handleAddAttendee}>Add Learner</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Wizard */}
+      <Dialog open={contactAttendeeOpen} onOpenChange={setContactAttendeeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Contact Attendees</DialogTitle>
+            <DialogDescription>
+              Send an email to all learners enrolled in this course.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="subject">Subject</Label>
+              <Input id="subject" placeholder="Course Update..." className="mt-2" />
+            </div>
+            <div>
+              <Label htmlFor="message">Message</Label>
+              <Textarea id="message" placeholder="Type your message here..." className="mt-2 min-h-[100px]" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setContactAttendeeOpen(false)}>Cancel</Button>
+            <Button onClick={handleContactAttendee}>Send Message</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

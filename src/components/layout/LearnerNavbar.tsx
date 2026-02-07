@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { GraduationCap, BookOpen, LayoutDashboard, Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { GraduationCap, BookOpen, LayoutDashboard, Menu, X, User, LogOut, Settings, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 export function LearnerNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks: { href: string; label: string; icon: any }[] = [];
@@ -24,14 +25,20 @@ export function LearnerNavbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+
       <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-            <GraduationCap className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span>LearnSphere</span>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} title="Go Back">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
+              <GraduationCap className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span>LearnSphere</span>
+          </Link>
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
