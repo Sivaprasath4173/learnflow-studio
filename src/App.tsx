@@ -129,7 +129,7 @@ function AppRoutes() {
         <Route path="courses/:courseId" element={<CourseEditorPage />} />
         <Route path="learners" element={<BackofficeLearnersPage />} />
         <Route path="reports" element={<BackofficeReportsPage />} />
-        <Route path="settings" element={<BackofficeSettingsPage />} />
+        <Route path="settings" element={<LearnerSettingsPage />} />
       </Route>
 
       {/* 404 */}

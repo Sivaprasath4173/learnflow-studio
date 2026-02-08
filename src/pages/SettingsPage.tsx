@@ -19,6 +19,8 @@ import {
   CreditCard, CheckCircle2, RotateCcw, Camera, Mail, LayoutDashboard
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
@@ -76,8 +78,14 @@ export default function SettingsPage() {
     setSecurity(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
   };
 
+  const location = useLocation();
+  const isBackoffice = location.pathname.startsWith('/backoffice');
+
   return (
-    <div className="container pt-24 pb-8 max-w-6xl animate-in fade-in duration-500">
+    <div className={cn(
+      "container pb-8 max-w-6xl animate-in fade-in duration-500",
+      isBackoffice ? "pt-8" : "pt-24"
+    )}>
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">

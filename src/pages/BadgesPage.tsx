@@ -1,4 +1,4 @@
-import { Award, Star, Medal, Trophy, Moon, Zap, Target, Crown, Sun, BookOpen, Clock } from 'lucide-react';
+import { Award, Star, Medal, Trophy, Moon, Zap, Target, Crown, Sun, BookOpen, Clock, Lock, Sparkles, Flame, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type UserStats = {
@@ -166,34 +166,56 @@ export function GamificationPanel() {
   return (
     <div className="space-y-8">
       {/* Progress Summary */}
-      <div className="flex flex-wrap items-center justify-center gap-6 p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-background to-accent/10 border border-border/50">
-        <div className="text-center">
-          <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            {unlockedCount}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4 fade-in duration-700">
+
+        {/* Badges Earned */}
+        <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/5 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-500/40">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-3 p-3 rounded-full bg-purple-500/10 text-purple-600">
+              <Trophy className="h-6 w-6" />
+            </div>
+            <div className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 drop-shadow-sm">
+              {unlockedCount}
+            </div>
+            <div className="text-xs font-bold text-muted-foreground mt-2 group-hover:text-purple-600 transition-colors uppercase tracking-widest">Badges Earned</div>
           </div>
-          <div className="text-sm text-muted-foreground">Badges Earned</div>
         </div>
 
-        <div className="w-px h-12 bg-border hidden sm:block" />
-
-        <div className="text-center">
-          <div className="text-4xl font-bold text-muted-foreground">
-            {BADGES.length - unlockedCount}
+        {/* To Unlock */}
+        <div className="group relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10 hover:border-cyan-500/40">
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-3 p-3 rounded-full bg-cyan-500/10 text-cyan-600">
+              <Lock className="h-6 w-6" />
+            </div>
+            <div className="text-4xl font-bold text-muted-foreground/40 group-hover:text-cyan-600 transition-colors duration-300">
+              {BADGES.length - unlockedCount}
+            </div>
+            <div className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">Badges To Unlock</div>
           </div>
-          <div className="text-sm text-muted-foreground">To Unlock</div>
         </div>
 
-        <div className="w-px h-12 bg-border hidden sm:block" />
-
-        <div className="text-center">
-          <div className="text-4xl font-bold text-primary">
-            {userStats.streak}
+        {/* Streak */}
+        <div className="group relative overflow-hidden rounded-2xl border border-orange-500/20 bg-orange-500/5 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-500/40">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-3 p-3 rounded-full bg-orange-500/10 text-orange-600 animate-pulse">
+              <Flame className="h-6 w-6" />
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-4xl font-extrabold text-orange-600 drop-shadow-sm">{userStats.streak}</span>
+            </div>
+            <div className="text-xs font-bold text-muted-foreground mt-2 group-hover:text-orange-600 transition-colors uppercase tracking-widest">Day Streak</div>
           </div>
-          <div className="text-sm text-muted-foreground">Day Streak 🔥</div>
         </div>
       </div>
 
       {/* Badge Grid */}
+      <h2 className="text-xl font-bold flex items-center gap-2 mt-8 mb-4">
+        <Award className="h-5 w-5 text-primary" />
+        All Achievements
+      </h2>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {badgesWithStatus.map((badge, index) => {
           const Icon = badge.icon;
@@ -201,61 +223,68 @@ export function GamificationPanel() {
             <div
               key={badge.id}
               className={cn(
-                "group relative overflow-hidden rounded-2xl border p-6 text-center transition-all duration-500",
+                "group relative overflow-hidden rounded-xl border p-6 text-center transition-all duration-500",
                 "hover:-translate-y-1 hover:shadow-lg",
                 badge.unlocked
-                  ? "bg-card border-primary/30 shadow-md"
-                  : "bg-muted/30 border-border/50 opacity-60"
+                  ? "bg-card border-primary/20 shadow-md"
+                  : "bg-muted/10 border-border/50 opacity-70 grayscale hover:grayscale-0 hover:opacity-100"
               )}
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Glow Effect for Unlocked */}
               {badge.unlocked && (
                 <div className={cn(
                   "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500",
                   `bg-gradient-to-br ${badge.color}`
-                )} style={{ filter: 'blur(60px)', opacity: 0.15 }} />
+                )} style={{ filter: 'blur(80px)', opacity: 0.1 }} />
               )}
 
               {/* Badge Icon */}
-              <div className="relative mb-4 flex justify-center">
+              <div className="relative mb-5 flex justify-center">
                 <div className={cn(
-                  "relative flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300",
+                  "relative flex h-20 w-20 items-center justify-center rounded-full transition-all duration-300 border-4",
                   badge.unlocked
-                    ? `bg-gradient-to-br ${badge.color} shadow-lg group-hover:scale-110`
-                    : "bg-muted"
+                    ? `bg-gradient-to-br ${badge.color} border-background shadow-lg group-hover:scale-105`
+                    : "bg-muted border-transparent"
                 )}>
                   {badge.unlocked && (
-                    <div className="absolute inset-0 rounded-full blur-xl opacity-50"
+                    <div className="absolute inset-0 rounded-full blur-xl opacity-40"
                       style={{ background: `linear-gradient(135deg, var(--${badge.glowColor}-400), var(--${badge.glowColor}-600))` }}
                     />
                   )}
                   {Icon && <Icon className={cn(
-                    "h-8 w-8 relative z-10",
+                    "h-8 w-8 relative z-10 transition-transform duration-300 group-hover:scale-110",
                     badge.unlocked ? "text-white" : "text-muted-foreground"
                   )} />}
+
+                  {/* Lock Overlay for Locked Badges */}
+                  {!badge.unlocked && (
+                    <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1.5 shadow-sm border border-border">
+                      <Lock className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  )}
+
+                  {/* Check Overlay for Unlocked */}
+                  {badge.unlocked && (
+                    <div className="absolute -bottom-2 -right-2 bg-background rounded-full p-1 shadow-sm border border-primary/20">
+                      <CheckCircle2 className={cn("h-4 w-4", `text-${badge.glowColor}-600`)} color="var(--primary)" />
+                    </div>
+                  )}
+
                 </div>
               </div>
 
               {/* Badge Content */}
               <h3 className={cn(
-                "mb-2 text-lg font-bold transition-colors",
-                badge.unlocked ? "text-foreground" : "text-muted-foreground"
+                "mb-1 text-lg font-bold transition-colors",
+                badge.unlocked ? "text-foreground group-hover:text-primary" : "text-muted-foreground"
               )}>
                 {badge.name}
               </h3>
 
-              <p className="text-sm text-muted-foreground">
-                {badge.unlocked ? badge.description : "🔒 Keep learning to unlock"}
+              <p className="text-sm text-muted-foreground leading-relaxed px-2">
+                {badge.unlocked ? badge.description : "Keep learning to unlock this milestone."}
               </p>
-
-              {/* Unlocked Badge Indicator */}
-              {badge.unlocked && (
-                <div className="mt-4 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                  <Award className="h-3 w-3" />
-                  Earned
-                </div>
-              )}
             </div>
           );
         })}
@@ -266,36 +295,43 @@ export function GamificationPanel() {
 
 export default function BadgesPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Hero Section with Gradient */}
-      <div className="relative overflow-hidden border-b border-border/50">
+      <div className="relative overflow-hidden border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-background to-accent/8" />
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-primary/20 to-purple-500/10 rounded-full blur-3xl opacity-60" />
-        <div className="absolute -top-20 -right-40 w-80 h-80 bg-gradient-to-bl from-accent/15 to-cyan-500/10 rounded-full blur-3xl opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-40 animate-pulse" />
+        <div className="absolute top-20 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl opacity-30" />
 
         <div className="container relative pt-24 pb-12 md:pt-32 md:pb-16">
           <div className="text-center space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent text-white mb-2">
-              <Medal className="h-8 w-8" />
+
+            {/* Achievement Icon */}
+            <div className="relative inline-block mb-1">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+              <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-violet-600 text-white shadow-xl rotate-3 transition-transform duration-500 hover:rotate-6 hover:scale-105">
+                <Medal className="h-8 w-8" />
+              </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground">
-              My Badges
-            </h1>
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
+                My <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">Badges</span>
+              </h1>
+              <div className="h-1 w-24 bg-gradient-to-r from-primary to-transparent mx-auto rounded-full" />
+            </div>
 
             {/* Subtitle */}
-            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              Celebrate your learning achievements and unlock new milestones
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Track your learning journey, unlock new milestones, and showcase your achievements.
             </p>
           </div>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="container py-10">
+      <div className="container -mt-10 relative z-10">
         <GamificationPanel />
       </div>
     </div>
