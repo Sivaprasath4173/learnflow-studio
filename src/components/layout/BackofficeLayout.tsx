@@ -18,10 +18,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
-const sidebarLinks = [
+interface SidebarLink {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  exact?: boolean;
+  adminOnly?: boolean;
+}
+
+const sidebarLinks: SidebarLink[] = [
   { href: '/backoffice', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/backoffice/courses', label: 'Courses', icon: BookMarked },
   { href: '/backoffice/learners', label: 'Learners', icon: UsersRound },
+  { href: '/backoffice/instructors', label: 'Instructors', icon: GraduationCap, adminOnly: true },
   { href: '/backoffice/reports', label: 'Reports', icon: PieChart },
   { href: '/backoffice/settings', label: 'Settings', icon: Settings2 },
 ];
@@ -90,23 +99,26 @@ export function BackofficeLayout() {
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-2">
-          {sidebarLinks.map(({ href, label, icon: Icon, exact }) => (
-            <Link
-              key={href}
-              to={href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive(href, exact)
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                collapsed && "justify-center"
-              )}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && <span>{label}</span>}
-            </Link>
-          ))}
+          {sidebarLinks.map(({ href, label, icon: Icon, exact, adminOnly }) => {
+            if (adminOnly && user?.role !== 'admin') return null;
+            return (
+              <Link
+                key={href}
+                to={href}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive(href, exact)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  collapsed && "justify-center"
+                )}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                {!collapsed && <span>{label}</span>}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User Section */}

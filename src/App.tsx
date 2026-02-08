@@ -29,7 +29,7 @@ import BackofficeCoursesPage from "@/pages/backoffice/BackofficeCoursesPage";
 import CourseEditorPage from "@/pages/backoffice/CourseEditorPage";
 import BackofficeReportsPage from "@/pages/backoffice/BackofficeReportsPage";
 import BackofficeLearnersPage from "@/pages/backoffice/BackofficeLearnersPage";
-import BackofficeSettingsPage from "@/pages/backoffice/SettingsPage";
+import BackofficeInstructorsPage from "@/pages/backoffice/BackofficeInstructorsPage";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +128,7 @@ function AppRoutes() {
         <Route path="courses" element={<BackofficeCoursesPage />} />
         <Route path="courses/:courseId" element={<CourseEditorPage />} />
         <Route path="learners" element={<BackofficeLearnersPage />} />
+        <Route path="instructors" element={<BackofficeInstructorsPage />} />
         <Route path="reports" element={<BackofficeReportsPage />} />
         <Route path="settings" element={<LearnerSettingsPage />} />
       </Route>
