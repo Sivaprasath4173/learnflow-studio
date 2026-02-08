@@ -29,12 +29,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(courses.router)
-app.include_router(lessons.router)
-app.include_router(enrollments.router)
-app.include_router(reviews.router)
-app.include_router(reporting.router)
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(courses.router, prefix="/api/v1")
+app.include_router(lessons.router, prefix="/api/v1")
+app.include_router(enrollments.router, prefix="/api/v1")
+app.include_router(reviews.router, prefix="/api/v1")
+app.include_router(reporting.router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():
