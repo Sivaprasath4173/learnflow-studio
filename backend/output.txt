@@ -1,0 +1,33 @@
+Found 8 users matching 'arun'
+User: Arunpandiyan s (arun.s00077@gmail.com), Role: UserRole.student, ID: 23f1092e-e3d2-4c40-ae73-60d7741338c8
+  Created 0 courses.
+User: Arunpandiyan S (arun.saravanan066@gmail.com), Role: UserRole.admin, ID: 11dc61a2-b18c-4d2a-b6bf-99f93c908014
+  Created 1 courses.
+    Course 'react' (ID: 79d2d741-6ac9-47c0-8999-23ff2e87024c) has 0 enrollments.
+User: Arunpandiyan s (ddjd@dn.com), Role: UserRole.instructor, ID: 1863cd64-b867-4e4c-adfe-3caf801301f1
+  Created 1 courses.
+    Course 'react' (ID: 4740751c-6b8e-4247-8be1-8847a42cfe2a) has 0 enrollments.
+User: arun (arun.s.cse.2024@snsce.ac.in), Role: UserRole.instructor, ID: 281b3154-da66-41f6-9ef2-da80eb8f6320
+  Created 11 courses.
+    Course 'ddergerg' (ID: 20144042-c20a-4748-bae6-97a34953afcf) has 0 enrollments.
+    Course 'ddergerg' (ID: 15faa63b-d30b-4cc2-aad1-c5620b313312) has 0 enrollments.
+    Course 'ddergerg' (ID: 171fed99-ddb0-4e7d-ab57-47815f02ada6) has 0 enrollments.
+    Course 'ddergerg' (ID: 1ba351d0-155f-494a-a32a-fd2837e43f73) has 0 enrollments.
+    Course 'ddergerg' (ID: 5ed969ca-de50-4634-bd1a-3474a0f5e8e0) has 0 enrollments.
+    Course 'ddergerg' (ID: b04494a6-a2f4-4d06-b260-3e9616180c8d) has 0 enrollments.
+    Course 'ddergerg' (ID: b3220cb0-6dd8-49e1-9a54-fd5509254f91) has 0 enrollments.
+    Course 'ddergerg' (ID: 5962510d-6bc4-472e-8448-0875fb7e193c) has 0 enrollments.
+    Course 'ddergerg' (ID: 2470075a-b2cc-40e5-bc57-1646c2f49ea6) has 0 enrollments.
+    Course 'solo leveling' (ID: 7f2d9653-08d5-45bc-b2e4-a58743e37f14) has 0 enrollments.
+    Course 'solo leveling' (ID: 36e8795a-c807-4843-8250-9ecf81f7550b) has 0 enrollments.
+User: arun pandian ips (arunpx@gmail.com), Role: UserRole.instructor, ID: f0f13f76-2721-4809-8d54-5e79edc8f5cc
+  Created 1 courses.
+    Course 'Arunpandiyan s' (ID: 14c78b04-283a-424d-b273-b6dfe4efa68f) has 0 enrollments.
+User: Arunpandiyan s (programmermathi@gmail.com), Role: UserRole.instructor, ID: 19dabf95-136f-4196-91e2-d2d9057a20d8
+  Created 1 courses.
+    Course 'python' (ID: 9132c932-e174-4907-acd0-2caf80258608) has 1 enrollments.
+      - Enrolled User: 729ff630-9f1f-433e-a4ef-a443ba2780bf, Status: EnrollmentStatus.completed
+User: arun (sivaprasath@gmail.com), Role: UserRole.admin, ID: 2be3fad6-f7e1-4c84-a132-58751a09b781
+  Created 0 courses.
+User: arun (apx200000@gmail.com), Role: UserRole.instructor, ID: 418221fa-66e9-4cc7-852a-77b3682275d1
+  Created 0 courses.
