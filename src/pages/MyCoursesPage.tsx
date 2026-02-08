@@ -3,7 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CourseCard } from '@/components/courses/CourseCard';
 import { GamificationPanel } from '@/components/gamification/GamificationPanel';
 import { mockCourses, mockEnrollments } from '@/data/mockData';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import { BookOpen, CheckCircle, Clock, PlayCircle, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -74,28 +75,108 @@ export default function MyCoursesPage() {
           {/* Main Content */}
           <div>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-8 grid w-full grid-cols-4 rounded-xl bg-muted p-1">
-                <TabsTrigger value="all" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
-                  <BookOpen className="h-4 w-4" />
-                  <span className="hidden sm:inline">All</span>
-                  <span className="text-xs text-muted-foreground">({stats.all})</span>
-                </TabsTrigger>
-                <TabsTrigger value="yet_to_start" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
-                  <Clock className="h-4 w-4" />
-                  <span className="hidden sm:inline">To Start</span>
-                  <span className="text-xs text-muted-foreground">({stats.yet_to_start})</span>
-                </TabsTrigger>
-                <TabsTrigger value="in_progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
-                  <PlayCircle className="h-4 w-4" />
-                  <span className="hidden sm:inline">In Progress</span>
-                  <span className="text-xs text-muted-foreground">({stats.in_progress})</span>
-                </TabsTrigger>
-                <TabsTrigger value="completed" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition transition-all duration-200 ease-out hover:bg-background/70">
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="hidden sm:inline">Completed</span>
-                  <span className="text-xs text-muted-foreground">({stats.completed})</span>
-                </TabsTrigger>
-              </TabsList>
+
+              <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4 lg:gap-4">
+                {[
+                  {
+                    id: 'all',
+                    label: 'All Courses',
+                    icon: BookOpen,
+                    colorClass: 'text-purple-600 dark:text-purple-400',
+                    bgClass: 'bg-purple-500/10',
+                    activeBorder: 'border-purple-500/50',
+                    activeRing: 'ring-purple-500/20',
+                    gradient: 'from-purple-500/5 to-indigo-500/5',
+                    activeGradient: 'from-purple-500/10 to-indigo-500/10'
+                  },
+                  {
+                    id: 'yet_to_start',
+                    label: 'To Start',
+                    icon: Clock,
+                    colorClass: 'text-amber-600 dark:text-amber-400',
+                    bgClass: 'bg-amber-500/10',
+                    activeBorder: 'border-amber-500/50',
+                    activeRing: 'ring-amber-500/20',
+                    gradient: 'from-amber-500/5 to-orange-500/5',
+                    activeGradient: 'from-amber-500/10 to-orange-500/10'
+                  },
+                  {
+                    id: 'in_progress',
+                    label: 'In Progress',
+                    icon: PlayCircle,
+                    colorClass: 'text-blue-600 dark:text-blue-400',
+                    bgClass: 'bg-blue-500/10',
+                    activeBorder: 'border-blue-500/50',
+                    activeRing: 'ring-blue-500/20',
+                    gradient: 'from-blue-500/5 to-cyan-500/5',
+                    activeGradient: 'from-blue-500/10 to-cyan-500/10'
+                  },
+                  {
+                    id: 'completed',
+                    label: 'Completed',
+                    icon: CheckCircle,
+                    colorClass: 'text-green-600 dark:text-green-400',
+                    bgClass: 'bg-green-500/10',
+                    activeBorder: 'border-green-500/50',
+                    activeRing: 'ring-green-500/20',
+                    gradient: 'from-green-500/5 to-emerald-500/5',
+                    activeGradient: 'from-green-500/10 to-emerald-500/10'
+                  },
+                ].map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  const Icon = tab.icon;
+                  // Map stats to tab id
+                  const count = stats[tab.id as keyof typeof stats];
+
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                        "group relative flex flex-col items-center justify-center gap-3 rounded-xl border p-3 transition-all duration-300 md:p-4 hover:scale-[1.02]",
+                        isActive
+                          ? cn(
+                            "shadow-md bg-gradient-to-br ring-2",
+                            tab.activeBorder,
+                            tab.activeRing,
+                            tab.activeGradient
+                          )
+                          : "border-border/50 bg-background/50 hover:bg-muted/50 hover:shadow-sm hover:border-border"
+                      )}
+                    >
+                      {/* Active Glow Effect */}
+                      {isActive && (
+                        <div className={cn("absolute inset-0 rounded-xl opacity-20 blur-xl transition-all duration-500", tab.bgClass.replace('/10', '/30'))} />
+                      )}
+
+                      <div className={cn(
+                        "relative flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500",
+                        isActive
+                          ? cn("bg-background shadow-sm scale-110", tab.colorClass)
+                          : "bg-muted text-muted-foreground group-hover:bg-background group-hover:text-foreground group-hover:shadow-sm"
+                      )}>
+                        <Icon className={cn("h-5 w-5 transition-transform duration-500", isActive && "animate-pulse")} />
+                      </div>
+
+                      <div className="space-y-0.5 text-center">
+                        <span className={cn(
+                          "block text-sm font-bold transition-colors duration-300",
+                          isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        )}>
+                          {tab.label}
+                        </span>
+                        <span className={cn(
+                          "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium transition-colors duration-300",
+                          isActive ? cn(tab.bgClass, tab.colorClass) : "bg-muted text-muted-foreground"
+                        )}>
+                          {count} Courses
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
 
               {['all', 'yet_to_start', 'in_progress', 'completed'].map((tab) => (
                 <TabsContent
